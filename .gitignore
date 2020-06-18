@@ -1,0 +1,11 @@
+.metals/
+.mypy_cache/
+.vscode/
+*.idea*
+.metals
+.idea
+out/
+target/
+.DS*
+.settings
+.Dockerfile.swp

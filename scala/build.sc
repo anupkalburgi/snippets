@@ -15,6 +15,7 @@ object snippet extends ScalaModule with ScalafmtModule {
 	def scalacOptions = Seq("-Ydelambdafy:inline")
 	def ivyDeps = Agg(
 		ivy"com.lihaoyi::pprint:0.5.2",
+		ivy"org.typelevel::cats-core::2.0.0"
 		)
 	def testFrameworks = Seq("org.scalatest.tools.Framework")
 

@@ -1,3 +1,4 @@
+import math
 def decimal_to_binary(num, rems):
     if num == 0:
         return rems[::-1]
@@ -24,8 +25,18 @@ counting from right to left is more convinent, as the base value goes on increas
             binary, place_value * 2, decimal_value + place_value * last_bit
         )
 
+def binary_to_decimal_v2(binary):
+    num_of_digits = len(binary) - 1
+    sum = 0
+    for bd in binary:
+        if bd == 1:
+            sum = sum + math.pow(2, num_of_digits)
+        num_of_digits = num_of_digits - 1 
+    return sum
+
 
 assert binary_to_decimal([1, 1, 0, 0, 0, 0, 0, 1], 1, 0) == 193
+assert binary_to_decimal_v2([1, 1, 0, 0, 0, 0, 0, 1]) == 193.0
 
 
 def convert_decimal_binary(decimal, binary):
