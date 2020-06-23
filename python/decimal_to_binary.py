@@ -29,11 +29,12 @@ def binary_to_decimal_v2(binary):
     num_of_digits = len(binary) - 1
     sum = 0
     for bd in binary:
-        if bd == 1:
-            sum = sum + math.pow(2, num_of_digits)
+        sum = sum + bd * math.pow(2, num_of_digits)
         num_of_digits = num_of_digits - 1 
     return sum
 
+# If there was not math func, recursive function is better
+# easier 
 
 assert binary_to_decimal([1, 1, 0, 0, 0, 0, 0, 1], 1, 0) == 193
 assert binary_to_decimal_v2([1, 1, 0, 0, 0, 0, 0, 1]) == 193.0
