@@ -9,3 +9,4 @@ target/
 .DS*
 .settings
 .Dockerfile.swp
+.ammonite/
