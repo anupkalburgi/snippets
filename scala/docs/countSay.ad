@@ -1,0 +1,15 @@
+[CountAsYouSay]: Count As You Say
+    + <P1>: Recursive Solutions are great  #pro
+    + <P2>: using recursive, there are two way to there
+        + Take left and right, drop right, we can do some array slicing
+        + or write a function for takeWhile and drop while
+        - using a HashMap is a bad idea as we will loose the order
+
+ - <C1>: Using for loops with if else gets really complicated very soon. #con
+
+<!-- [Thesis]: Censorship by the state
+  + <P1>: Freedom of speech is never an absolute right but an aspiration.
+  It ceases to be a right when it causes harm to others -- we all
+  recognise the value of, for example, legislating against
+  incitement to racial hatred. Therefore it is not the case that
+  censorship is wrong in principle. #pro -->

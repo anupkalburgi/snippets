@@ -1,13 +1,12 @@
-package snippet
+package main.scala
 
-object Scratch {
+import fastparse._, NoWhitespace._
+object Scratch extends App {
 
-    val input = List("ate", "eat", "pat", "tea", "now")
 
-    val out =  input
-    .map(w => w.sorted)
-    .groupBy(id)
+    def parseA[_: P] = P("hello")
+
+    val tmps: Parsed[Unit] = fastparse.parse("he", parseA(_))
     
-    print(out)
-  
+    println(tmps)
 }
