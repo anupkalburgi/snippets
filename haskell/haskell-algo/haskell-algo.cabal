@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b3851ce0f20611210b2e3e30cda7b6504ddfe8b9ec75a6c7f38648805d51f645
+-- hash: e08281850f82c72a6ee207634035f3d9721e9c9c625355c5378f7f32d8dc339b
 
 name:           haskell-algo
 version:        0.1.0.0
@@ -34,11 +34,18 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , text
+    , text-replace
+    , replace-megaparsec
+    , megaparsec
+    , directory
+    , filepath
   default-language: Haskell2010
 
 executable haskell-algo-exe
   main-is: Main.hs
   other-modules:
+      ObsMdToGhmd
       Paths_haskell_algo
   hs-source-dirs:
       app
@@ -46,6 +53,12 @@ executable haskell-algo-exe
   build-depends:
       base >=4.7 && <5
     , haskell-algo
+    , text
+    , text-replace
+    , replace-megaparsec
+    , megaparsec
+    , directory
+    , filepath
   default-language: Haskell2010
 
 test-suite haskell-algo-test

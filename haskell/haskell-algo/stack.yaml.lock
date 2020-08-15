@@ -3,10 +3,31 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    hackage: text-1.2.4.0@sha256:8c24450feb8e3bbb7ea3e17af24ef57e85db077c4bf53e5bcc345b283d1b1d5b,10081
+    pantry-tree:
+      size: 7457
+      sha256: 3437b0a73ce2ae1a81aa8b3438d41a85981c00894cdbee0d6d6d6873046a5d5d
+  original:
+    hackage: text-1.2.4.0
+- completed:
+    hackage: text-replace-0.0.0.6@sha256:1da9fd389da635594e65671499c045b48bc3fdd985e18a5c69cc9c9a02ad5fac,2209
+    pantry-tree:
+      size: 293
+      sha256: 7f7c3a17cb3a926eabdca7581e705974046137c1147c5196b72681e9477b5593
+  original:
+    hackage: text-replace-0.0.0.6
+- completed:
+    hackage: parsec-3.1.14.0@sha256:63a4555d6ea2aaccd8588fc809e5d137e72b668898ab3b171ce8458b792f0f36,4356
+    pantry-tree:
+      size: 2574
+      sha256: c17cc12ba9a912521d58d8bcee07830351fe27483d9309ebdac8e32175e10706
+  original:
+    hackage: parsec-3.1.14.0
 snapshots:
 - completed:
-    size: 529134
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2019/9/21.yaml
-    sha256: 1fb0ce1b3aab70f7b5147dc7b4abb8b1376d89e6991b78b977999be81e4c7912
-  original: nightly-2019-09-21
+    size: 498024
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2020/6/19.yaml
+    sha256: e34917e6a8662a7fc8b9e3796de3fe7a771509907efe3ac53c4453d7cd4a57cd
+  original: nightly-2020-06-19
