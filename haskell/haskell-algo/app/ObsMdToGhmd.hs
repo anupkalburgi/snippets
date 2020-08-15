@@ -11,23 +11,17 @@ import Text.Megaparsec.Char.Lexer
 import System.Directory
 import System.FilePath.Posix
 
-
--- What I actaully want to do is read the whole dir, and collect image filesw
---  then read all the md files ... search for [[*.png]] in the text and replace that
--- Take a file, reformat the images and write back to disk
--- also i will have to copy all the image to destination dir and remove spaces
--- remove spaces from the image
-
-
+-- assumes dest is always liks /home/<>/obs/processed/
 -- processMdFile :: FilePath -> FilePath -> IO ()
 processMdFile :: FilePath -> [Char] -> IO [()]
 processMdFile src dest = do
     filesdir <- getDirectoryContents src 
-    _ <- removeDirectoryRecursive $ dest 
-    _ <- createDirectory $ dest
-    _ <- createDirectory $ dest ++ "/images/"
-    mapM (\f -> copyFile (src ++ "/" ++ f) (dest ++ "/images/" ++ rScore f)) (images filesdir)
-    mapM (\f -> reformatImage (src ++ "/" ++ f) (dest ++ f)) (mdFiles filesdir)
+    _ <- removeDirectoryRecursive dest 
+    _ <- createDirectory dest
+    _ <- setCurrentDirectory dest
+    _ <- createDirectory "images/"
+    mapM (\f -> copyFile (src ++ "/" ++ f) ("images/" ++ rScore f)) (images filesdir)
+    mapM (\f -> reformatImage (src ++ "/" ++ f) f) (mdFiles filesdir)
     
     where 
         mdFiles = filter (\f ->  (takeExtension f) == ".md" )
@@ -37,7 +31,7 @@ reformatImage :: FilePath -> FilePath -> IO ()
 reformatImage src destFile = do
     mdFileText <-  T.readFile src
     let bracevar = chunk "[[" *> manyTill anySingle (chunk ".png]]") :: Parsec Void String String
-    T.writeFile destFile $ T.pack $ streamEdit bracevar (\p -> "[" ++ rScore p ++ "]" ++ "(" ++ "/hs-process/images/" ++ (rScore p)  ++ ".png)") $ T.unpack mdFileText
+    T.writeFile destFile $ T.pack $ streamEdit bracevar (\p -> "[" ++ rScore p ++ "]" ++ "(" ++ "/processed/images/" ++ (rScore p)  ++ ".png)") $ T.unpack mdFileText
         
 
 rScore :: String -> String
