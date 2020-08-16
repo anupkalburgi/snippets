@@ -6,8 +6,6 @@ import qualified Text.Replace as RT
 import Data.Void
 import Replace.Megaparsec
 import Text.Megaparsec
-import Text.Megaparsec.Char
-import Text.Megaparsec.Char.Lexer
 import System.Directory
 import System.FilePath.Posix
 
