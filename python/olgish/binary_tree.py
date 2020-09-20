@@ -56,16 +56,16 @@ def bTree_by_level(root):
     # next_levl_child.append() # [5,3]
 
     ans.append([root.data])
-    levels.append([root])
+    levels.append([root]) # [[Node(A)]]
     while levels:
-        level = levels.pop(0)
-        nex_chd = children_at_level(level)
+        level = levels.pop(0) # level =  [[Node(B), Node(C)]] levels = []
+        nex_chd = children_at_level(level) # [Node(D), Node(E), Node(F), Node(G)]
         next_ans = []
         for chld in nex_chd:
             next_ans.append(str(chld))
         ans.append(next_ans)
         if nex_chd:
-            levels.append(nex_chd)
+            levels.append(nex_chd) # levels = [[Node(D), Node(E), Node(F), Node(G)]]
 
 
     
