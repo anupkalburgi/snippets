@@ -72,7 +72,7 @@ class Solution:
                     visited.append(np)
                     queue.append(np)
                 (nl, nr) =  (node.left, node.right)
-                if nr not in visited:
+                if nr not in visited:ß
                     visited.append(nr)
                     queue.append(nr)
                 if nl not in visited:
