@@ -42,4 +42,5 @@ node11.right = node2
 root.right = node8
 node8.left = node13
 
-print(max_depth(root))
+# print(max_depth(root))
+print(height(root, [] , ))

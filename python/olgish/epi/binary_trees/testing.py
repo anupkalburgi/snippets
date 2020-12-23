@@ -7,6 +7,9 @@ def fib(num: int, acc):
 print(fib(10, 0))
 
 
+def this(that: int):
+    print("this and that is going to be crazy")
+
 def func(num: int ):
     if num % 2 == 0:
         return True
