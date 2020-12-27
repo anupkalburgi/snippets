@@ -1,1 +1,34 @@
-synchronized
+def subsets(A):
+    if len(A) == 0:
+        return [[]]
+    else:
+        (x, xs) = A[0], A[1:]
+        subs = subsets(xs)
+        return subs + [[x] + xss for xss in subs]
+
+
+coercive :: something that hurts or forcefull 
+we want to use a queue
+and evey command will have a precondition to check
+and in queue we want to store all the coommands that come in
+for ever command we have a helper private func
+
+queue because the ordering is very important
+if we use a hash we will not have ordering which is important
+
+when commit is called we execute all the commands in the queue and then mark the transaction complete
+if a roll back is called, we will clear the queue and the mark the transaction complete
+
+
+select film_id 
+ROW_NUMBER() over (partition by FCC.name order by F.length) as film_len_rank
+from films F
+join category C
+on F.film_id=C.film_id
+join category_name FCC
+on C.category_id=FCC.category_id
+where film_len_rank=1
+
+discipline 
+discipline
+architecture 
