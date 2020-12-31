@@ -86,6 +86,7 @@ def prod_array(A):
         result.append(left[i]* right[i])
 
 
+# TODO:copy the modifed code here, the size is use less 
 def longest_subsequence(s1, s2, i, j, size):
     """
     if i == len(s1) or j == len(s2):
@@ -98,3 +99,78 @@ def longest_subsequence(s1, s2, i, j, size):
             longest_subsequence(s1, s2, i, j+1, size)
         )
     """
+    return None
+
+
+def neighbour(r, c, rlen, clen):
+    nghs = [(r, c-1),(r-1, c), (r, c+1), (r+1, c)]
+    valid = []
+    for (nr, nc) in nghs:
+        if 0  nr <= rlen and 0 <= nc <= clen:
+            valid.append((nr,nc))
+    return valid
+
+def bfs(grid, r, c, visited): 
+    """
+    we start form a land
+
+    """
+    q = [(r, c)]
+    length = 0
+    
+
+    while q:
+        (nr, nc) = q.pop(0) # only lands are added to the queue
+        length = length  + 1
+        for (nnr, nnc) in neighbours(nr, nc, rlen, clen):
+            if grid[nnr][nnc] == 1 and (nnr, nnc) not in visited:
+                q.append((nnr, nnc))
+            visited.add((nnr,nnc))
+
+
+    return length
+visited = set()
+max_land_size = 0
+for i in range(grid):
+    for j in range(gird[0]):
+        if gird[i][j] == 1:
+            land_size  = bfs(grid, i, j, visited)
+            max_land_size = max(land_size, max_land_size)
+return max_land_size
+
+with actor_films as (
+    select actor_id, count(*)
+    from film_actor
+    group by 1
+    order by 2 desc
+    limit 1
+)
+select first_name, last_name
+from actor
+where actor_id in (select actor_id from actor_films)
+
+
+(film_id, category, length)
+with film_len as(
+    select film_id,
+    length, 
+    category,
+    row_number() over (partition by category order by legth)
+    from films
+
+)
+
+select film_id, legth, category 
+from film_len 
+where row_number = 1
+
+select
+    rental_id, 
+    customer_id,
+    LAG(amount, 1) over (partition by customer_id order by rental_time) as prev_amount, (for 1st that is going to be null)
+    row_number() over (partition by customer_id order by rental_time) as row_num
+from rental 
+
+consequences  
+hectic
+heuristic 
