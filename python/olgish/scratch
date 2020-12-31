@@ -1,34 +1,100 @@
-def subsets(A):
-    if len(A) == 0:
-        return [[]]
+# can be a binary search 
+# or reduction based recusion that is becaue the the there is natural base condition
+
+def sqrt(x):
+    if x <=1:
+        return x
     else:
-        (x, xs) = A[0], A[1:]
-        subs = subsets(xs)
-        return subs + [[x] + xss for xss in subs]
+        left = 2 * sqrt(x // 4) # sqrt(x >> 2) << 1
+        right = left + 1
+        return left if right > x * x else right
+
+# TODO: this 
+def bsqrt(x, l, r):
+    """
+    the sqrt of x must be between 0 and x 
+    mid = (l+r ) /  2 
+    if mid+1 *mid +1 == x:
+        return mid 
+    elif mid+1*mid+1 < x:
+        return bsqrt(x, mid+1, r)
+    else:
+        return bsqrt(x, l, mid)
+
+    bsqrt(8, 0, 7)
+    mid = (0+7)/2 = 3 
+    sqrd = mid+1*mid+1  (16)
+
+    bsqrt(8, 0, 3)
+    mid = (0 + 3) // 2 = 1 
+    sqrd = 1+1 * 1+1 = 4
+
+    bsqrt(8, 2, 3)
+    mid = (2+3)/2 = (5/2) = 2
+    sqrd = 3 * 3 = 9
+    bsqrt(8, 2, 2)
 
 
-coercive :: something that hurts or forcefull 
-we want to use a queue
-and evey command will have a precondition to check
-and in queue we want to store all the coommands that come in
-for ever command we have a helper private func
-
-queue because the ordering is very important
-if we use a hash we will not have ordering which is important
-
-when commit is called we execute all the commands in the queue and then mark the transaction complete
-if a roll back is called, we will clear the queue and the mark the transaction complete
+    """
 
 
-select film_id 
-ROW_NUMBER() over (partition by FCC.name order by F.length) as film_len_rank
-from films F
-join category C
-on F.film_id=C.film_id
-join category_name FCC
-on C.category_id=FCC.category_id
-where film_len_rank=1
 
-discipline 
-discipline
-architecture 
+def dfs(graph, node, visited):
+    if node not in visited:
+        visited.add(node)
+        for neighbour in graph[node]:
+            if neighbour not in visited:
+                dfs(graph, neighbour, visited)
+
+def dfs_iterative(graph, node):
+    stack = [node]
+    visited  = set()
+    path = []
+    while stack:
+        n = stack.pop()
+        visited.add(n)
+        path.append(n)
+        for neighbour in graph[n]:
+            stack.append(neighbour)
+    
+    return path
+
+
+# product array, excluding self
+def prod_array(A):
+    """
+    5,1,4,2 
+    1,5,5,20
+    8,8,2,1 
+    8,40,10,20
+    output array has to hold prod of all the elements expect it self
+    n^2 sol is easy, 
+    for a linear one
+        we can do 2 scans, on left and right, leaving out itself on both direction
+        the result, we would scan both and multiply the l[i] * r[i] (both will products till that point excluding it self )
+
+    """
+    left = [1 for _ in range(len(A))]
+    right = [1 for _ i range(len(A))] 
+
+    for i in range(1, len(A)):
+        left[i] = A[i-1] * left[i-1]
+    for i in range(len(A)-2, -1, -1):
+        right[i] = right[i+1] * A[i+1]
+    result = []
+    for i in range(len(A)):
+        result.append(left[i]* right[i])
+
+
+def longest_subsequence(s1, s2, i, j, size):
+    """
+    if i == len(s1) or j == len(s2):
+        return 0
+    if s1 == s2 
+        return  1 + longest_subsequence(s1, s2, i+1, j+1, size)
+    else:
+        return max(
+            longest_subsequence(s1, s2, i+1, j, size),
+            longest_subsequence(s1, s2, i, j+1, size)
+        )
+    """
