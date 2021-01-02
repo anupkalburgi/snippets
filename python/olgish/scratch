@@ -1,176 +1,163 @@
-# can be a binary search 
-# or reduction based recusion that is becaue the the there is natural base condition
+# with may_rentals_may as(
+#     select inventory_id
+#     from rental
+#     where extract(year from rental_ts)=2020 , 
+#           extract(month from rental_ts)=04
+# ),
 
-def sqrt(x):
-    if x <=1:
-        return x
-    else:
-        left = 2 * sqrt(x // 4) # sqrt(x >> 2) << 1
-        right = left + 1
-        return left if right > x * x else right
+# may_rentals as (
+#     select distinct F.film_id
+#     from may_rentals_may MRM
+#     join inventory I 
+#     on I.inventory_id = MRM.inventory_id
+# )
+# -- selecting only the left side of the venn diagram
+# movies_not_rented_may as (
+#     select F.film_id, 
+#         from films F
+#         LEFT OUTER JOIN may_rentals MR 
+#         on F.film_id = MR.film_id
+#         where MR.film_id is null -- takink only the left 
+# )
 
-# TODO: this 
-def bsqrt(x, l, r):
-    """
-    the sqrt of x must be between 0 and x 
-    mid = (l+r ) /  2 
-    if mid+1 *mid +1 == x:
-        return mid 
-    elif mid+1*mid+1 < x:
-        return bsqrt(x, mid+1, r)
-    else:
-        return bsqrt(x, l, mid)
+# select count(*) from movies_not_rented_may 
 
-    bsqrt(8, 0, 7)
-    mid = (0+7)/2 = 3 
-    sqrd = mid+1*mid+1  (16)
+# select col1, col2
+# from ctr1
+# union all 
+# select col1, col2
+# from ctr2 -- the colum types should be compatable, and the duplicated are preserved using all
 
-    bsqrt(8, 0, 3)
-    mid = (0 + 3) // 2 = 1 
-    sqrd = 1+1 * 1+1 = 4
+# select film_id, 
+# revenue,
+# sum(revenue) over   ()
+# from cte_with_revenue
 
-    bsqrt(8, 2, 3)
-    mid = (2+3)/2 = (5/2) = 2
-    sqrd = 3 * 3 = 9
-    bsqrt(8, 2, 2)
-
-
-    """
-
-
-
-def dfs(graph, node, visited):
-    if node not in visited:
-        visited.add(node)
-        for neighbour in graph[node]:
-            if neighbour not in visited:
-                dfs(graph, neighbour, visited)
-
-def dfs_iterative(graph, node):
-    stack = [node]
-    visited  = set()
-    path = []
-    while stack:
-        n = stack.pop()
-        visited.add(n)
-        path.append(n)
-        for neighbour in graph[n]:
-            stack.append(neighbour)
-    
-    return path
+# select customer_id
+# LAG(amount, 1) over (partition by customer_id order by payment_ts),
+# ROW_NUMBER() over (partition by customer_id order by payment_ts)
+# from payments_ts
 
 
-# product array, excluding self
-def prod_array(A):
-    """
-    5,1,4,2 
-    1,5,5,20
-    8,8,2,1 
-    8,40,10,20
-    output array has to hold prod of all the elements expect it self
-    n^2 sol is easy, 
-    for a linear one
-        we can do 2 scans, on left and right, leaving out itself on both direction
-        the result, we would scan both and multiply the l[i] * r[i] (both will products till that point excluding it self )
+"""
+longest common subsequence
+the chars dont have to be in sequence, there cna be gap between them, but the relative ordering must be the same 
 
-    """
-    left = [1 for _ in range(len(A))]
-    right = [1 for _ i range(len(A))] 
+abc 
+a
+b
+c
+ab 
+ac 
+bc 
 
-    for i in range(1, len(A)):
-        left[i] = A[i-1] * left[i-1]
-    for i in range(len(A)-2, -1, -1):
-        right[i] = right[i+1] * A[i+1]
-    result = []
-    for i in range(len(A)):
-        result.append(left[i]* right[i])
+brute force we can
+    s1_subsequence = 
+    s2_subsequence = 
+    max_len = 
+    for ss1 in s1_subequence:
+        for ss2 in s2_subsequence:
+            if ss1 == ss1:
+                max_len  = len(ss1, max_len)
+    return max_len
+
+the other approch = use recusion 
+if not s1 or not s2 => return 0
+if x1==y1 => return lcs(s1, s2, x1+1, y1+1, size +1 )
+else:
+    return max(
+        lcs(s1, s2, x1, y1+1, size),
+        lcs(s1, s2, x1+1, y1, size)
+
+    )
+
+now tracing that we will see some subproblems solved over and over again
+to imoprve that we can use memoization using an nested aray 
+
+we can use a dp there we avoid the problem of recusion stack overflow
+
+and still the problem is O(m*n)  complexity and  the one with plain recursion would be 2^n
+"""
 
 
-# TODO:copy the modifed code here, the size is use less 
-def longest_subsequence(s1, s2, i, j, size):
-    """
+def lcs(s1, s2, i, j):
     if i == len(s1) or j == len(s2):
         return 0
-    if s1 == s2 
-        return  1 + longest_subsequence(s1, s2, i+1, j+1, size)
     else:
-        return max(
-            longest_subsequence(s1, s2, i+1, j, size),
-            longest_subsequence(s1, s2, i, j+1, size)
-        )
-    """
-    return None
-
-
-def neighbour(r, c, rlen, clen):
-    nghs = [(r, c-1),(r-1, c), (r, c+1), (r+1, c)]
-    valid = []
-    for (nr, nc) in nghs:
-        if 0  nr <= rlen and 0 <= nc <= clen:
-            valid.append((nr,nc))
-    return valid
-
-def bfs(grid, r, c, visited): 
-    """
-    we start form a land
-
-    """
-    q = [(r, c)]
-    length = 0
+        if s1[i] == s2[j]:
+            return 1 + lcs(s1, s2, i+1, j+1)
+        else:
+            return max(
+                lcs(s1, s2, i+1, j),
+                lcs(s1, s2, i, j+1)
+            )
+def lcs_memo(s1, s2):
     
+    memo = [[ -1 for _ in range(len(s2))] for _ in range(len(s1))]
+    def lcs(s1, s2, i, j):
+        if i == len(s1) or j == len(s2):
+            return 0
+        else:
+            if memo[i][j] == -1:        
+                if s1[i] == s2[j]:
+                    memo[i][j] = lcs(s1, s2, i+1, j+1)
+                else:
+                    memo[i][j] =  max(
+                        lcs(s1, s2, i+1, j),
+                        lcs(s1, s2, i, j+1)
+                    )
+                return memo[i][j]
+            else:
+                return memo[i][j]
+        return lcs(s1, s2, 0, 0)
 
-    while q:
-        (nr, nc) = q.pop(0) # only lands are added to the queue
-        length = length  + 1
-        for (nnr, nnc) in neighbours(nr, nc, rlen, clen):
-            if grid[nnr][nnc] == 1 and (nnr, nnc) not in visited:
-                q.append((nnr, nnc))
-            visited.add((nnr,nnc))
+def lcs_dp(s1, s2):
+    # initilize extra row and column so that we can use that as starting point
+
+    dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
+    max_len = 0
+
+    for i in range(1, len(s1)+1):
+        for j in range(1, len(s2)+1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = dp[i-1][j-1]  + 1 
+            else:
+                dp[i][j] = max( dp[i][j-1], dp[i-1][j])
+            max_len = max(max_len, dp[i][j])
+    return max_len
 
 
-    return length
-visited = set()
-max_land_size = 0
-for i in range(grid):
-    for j in range(gird[0]):
-        if gird[i][j] == 1:
-            land_size  = bfs(grid, i, j, visited)
-            max_land_size = max(land_size, max_land_size)
-return max_land_size
+def subsets(lst):
+    if len(lst) == 0:
+        return [[]]
+    else:
+        (x, xs) = lst[0], lst[1:]
+        subs = subsets(xs) 
+        return subs + [ [x] + xxs for xxs in subs]
 
-with actor_films as (
-    select actor_id, count(*)
-    from film_actor
-    group by 1
-    order by 2 desc
-    limit 1
-)
-select first_name, last_name
-from actor
-where actor_id in (select actor_id from actor_films)
+# print(subsets(['a','b','c']))
 
 
-(film_id, category, length)
-with film_len as(
-    select film_id,
-    length, 
-    category,
-    row_number() over (partition by category order by legth)
-    from films
+def valid_bst(lst):
+    stack = []
+    """
+    if a given preorder traveral is stack sortable then it is a preorder traversal 
+    the pattern to avoid is 231
+    """
+    root = 999999
+    for x in lst:
+        if x < root:
+            return False
+        
+        while len(stack) != 0 and stack[-1] < x:
+            root = stack.pop()
+        
+        stack.append(x)
+    return True
 
-)
 
-select film_id, legth, category 
-from film_len 
-where row_number = 1
 
-select
-    rental_id, 
-    customer_id,
-    LAG(amount, 1) over (partition by customer_id order by rental_time) as prev_amount, (for 1st that is going to be null)
-    row_number() over (partition by customer_id order by rental_time) as row_num
-from rental 
 
-consequences  
-hectic
-heuristic 
+
+
+

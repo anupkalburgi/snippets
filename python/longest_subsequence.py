@@ -106,7 +106,6 @@ print("Substring End ###################################################")
 ###################################################
 # subsequence, without changing the order, 
 #  deleteing elements from the either
-# TODO: generting substring vs generating subsequence
 ###################################################
 
 def longest_subsequence(s1, s2, i, j):
@@ -192,3 +191,82 @@ def inserts_deletes_lcs(s1, s2):
 print(inserts_deletes_lcs("abc", "fbc"))
 print(inserts_deletes_lcs("abdca", "cbda"))
 print(inserts_deletes_lcs("passport", "ppsspt"))
+
+
+print("Longest increating subsequence ###################################################")
+###################################################
+# input 4,2,3,6, 10, 1, 12
+# ouput 5 (2,3,6,10,12)
+# 
+# 
+###################################################
+
+def lis(A, current, prev):
+    """
+    this solution is 2^n solution as there are 2 recursive call 
+
+    """
+    if len(A) == current:
+        return 0
+    else:
+        c1 = 0
+        if prev == -1 or A[prev] < A[current]:
+            c1 = 1 + lis(A, current = current+1, prev=current)
+        c2 = lis(A, current=current+1, prev=prev)
+        return max(c1, c2)
+
+assert lis([4, 2, 3, 6, 10, 1, 12], 0, -1) == 5
+assert lis([-4, 10, 3, 7, 15], 0, -1) == 4
+print(lis([4, 2, 3, 6, 10, 1, 12], 0, -1))
+print(lis([-4, 10, 3, 7, 15], 0, -1))
+
+def lis_memo(A):
+    memo = [[-1 for _ in range(len(A)+1)] for _ in range(len(A)+1)]
+    return lis_help(A, 0, -1, memo)
+    
+def lis_help(A, cur, prev, memo):
+    """
+    there are overlapping subproblems, which we cna
+    and by caching, we will be doing n^2 solition
+    """
+    if cur == len(A):
+        return 0
+    else:
+        if memo[cur][prev] == -1:
+            c1 = 0 
+            if prev == -1 or A[cur] > A[prev] :
+                c1 = 1 + lis_help(A, cur+1, cur, memo)
+            c2 = lis_help(A, cur+1, prev, memo)
+            memo[cur][prev] = max(c1, c2)
+            return memo[cur][prev]
+        else:
+            return memo[cur][prev]
+    
+
+assert lis_memo([4, 2, 3, 6, 10, 1, 12]) == 5
+assert lis_memo([-4, 10, 3, 7, 15]) == 4
+print(lis_memo([4, 2, 3, 6, 10, 1, 12]))
+print(lis_memo([-4, 10, 3, 7, 15]))
+
+
+
+def lis_dp(A):
+    """
+    the above solution is n^2
+    and that will hit a stackoverflow for a big enough problem
+    we do a n^2 algorithm using a single array 
+    """
+    dp = [1 for _ in range(len(A)+1)] # why is not initialized to 1
+    max_len = 0 
+
+    for i in range(1, len(A)):
+        for j in range(i):
+            if A[i] > A[j] and dp[i]  <= dp[j]:
+                dp[i] =  dp[j] + 1
+                max_len = max(dp[i], max_len)
+    return max_len 
+
+assert lis_dp([4, 2, 3, 6, 10, 1, 12]) == 5
+assert lis_dp([-4, 10, 3, 7, 15]) == 4
+print(lis_dp([4, 2, 3, 6, 10, 1, 12]))
+print(lis_dp([-4, 10, 3, 7, 15]))
