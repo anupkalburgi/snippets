@@ -1,163 +1,85 @@
-# with may_rentals_may as(
-#     select inventory_id
-#     from rental
-#     where extract(year from rental_ts)=2020 , 
-#           extract(month from rental_ts)=04
-# ),
-
-# may_rentals as (
-#     select distinct F.film_id
-#     from may_rentals_may MRM
-#     join inventory I 
-#     on I.inventory_id = MRM.inventory_id
-# )
-# -- selecting only the left side of the venn diagram
-# movies_not_rented_may as (
-#     select F.film_id, 
-#         from films F
-#         LEFT OUTER JOIN may_rentals MR 
-#         on F.film_id = MR.film_id
-#         where MR.film_id is null -- takink only the left 
-# )
-
-# select count(*) from movies_not_rented_may 
-
-# select col1, col2
-# from ctr1
-# union all 
-# select col1, col2
-# from ctr2 -- the colum types should be compatable, and the duplicated are preserved using all
-
-# select film_id, 
-# revenue,
-# sum(revenue) over   ()
-# from cte_with_revenue
-
-# select customer_id
-# LAG(amount, 1) over (partition by customer_id order by payment_ts),
-# ROW_NUMBER() over (partition by customer_id order by payment_ts)
-# from payments_ts
-
-
 """
-longest common subsequence
-the chars dont have to be in sequence, there cna be gap between them, but the relative ordering must be the same 
-
-abc 
-a
-b
-c
-ab 
-ac 
-bc 
-
-brute force we can
-    s1_subsequence = 
-    s2_subsequence = 
-    max_len = 
-    for ss1 in s1_subequence:
-        for ss2 in s2_subsequence:
-            if ss1 == ss1:
-                max_len  = len(ss1, max_len)
-    return max_len
-
-the other approch = use recusion 
-if not s1 or not s2 => return 0
-if x1==y1 => return lcs(s1, s2, x1+1, y1+1, size +1 )
-else:
-    return max(
-        lcs(s1, s2, x1, y1+1, size),
-        lcs(s1, s2, x1+1, y1, size)
-
-    )
-
-now tracing that we will see some subproblems solved over and over again
-to imoprve that we can use memoization using an nested aray 
-
-we can use a dp there we avoid the problem of recusion stack overflow
-
-and still the problem is O(m*n)  complexity and  the one with plain recursion would be 2^n
+longest common substring
+the chars must be in sequence, and next to each other
+we can generae all the subsequences and then count how many of them are the same
 """
 
 
-def lcs(s1, s2, i, j):
-    if i == len(s1) or j == len(s2):
-        return 0
+def substrings(lst):
+    """
+    n^2
+    """
+    subbs = []
+    for i in range(len(lst)+1):
+        for j in range(i, len(lst)+1):
+            if len(lst[i:j]) > 0:
+                subbs.append(lst[i:j]) # this slicing might not be a constant time operation
+    return subbs
+
+def lcs_brute(s1, s2):
+    subs1 = substrings(s1)
+    subs2 = substrings(s2)
+    # print(subs1)
+    # print(subs2)
+    max_len = 0 
+    for ss1 in subs1:
+        for ss2 in subs2:
+            if ss1 == ss2:
+                max_len = max(len(ss1), max_len)
+    return max_len 
+
+print(lcs_brute("abdca", "cbda"))
+
+
+# now that is brute force, using n2 time, but using recusion we will be getting a 3^solution 
+
+def lcs_recursive(s1, s2, i, j, size):
+    if len(s1) == i or len(s2) == j:
+        return size
     else:
         if s1[i] == s2[j]:
-            return 1 + lcs(s1, s2, i+1, j+1)
-        else:
-            return max(
-                lcs(s1, s2, i+1, j),
-                lcs(s1, s2, i, j+1)
-            )
-def lcs_memo(s1, s2):
-    
-    memo = [[ -1 for _ in range(len(s2))] for _ in range(len(s1))]
-    def lcs(s1, s2, i, j):
+            size  = lcs_recursive(s1, s2, i+1, j+1, size+1)
+        c1 = lcs_recursive(s1, s2, i, j+1, 0)
+        c2 = lcs_recursive(s1, s2, i+1, j, 0)
+        return max(size, c1, c2)
+print(lcs_recursive("abdca", "cbda", 0, 0 , 0))
+
+# now that is 3^(m+n) solution
+
+# usign memoization, we can get this down to M+N solution
+
+def lcs_recursive_memo(s1, s2):
+    max_sub = max(len(s1), len(s2))
+    mz = [[[-1 for _ in range(max_sub)] for _ in range(len(s2))] for _ in range(len(s1))]
+
+    def go(s1, s2, i, j, size):
         if i == len(s1) or j == len(s2):
-            return 0
+            return size
         else:
-            if memo[i][j] == -1:        
+            if mz[i][j][size] == -1:
+                c0 = size 
                 if s1[i] == s2[j]:
-                    memo[i][j] = lcs(s1, s2, i+1, j+1)
-                else:
-                    memo[i][j] =  max(
-                        lcs(s1, s2, i+1, j),
-                        lcs(s1, s2, i, j+1)
-                    )
-                return memo[i][j]
+                    c0 = go(s1, s2, i+1,j+1, size+1)
+                c1 = go(s1, s2, i, j+1, 0)
+                c2 = go(s1, s2, i+1, j, 0)
+                mz[i][j][size] = max(c0, c1, c2)
+                return mz[i][j][size]
             else:
-                return memo[i][j]
-        return lcs(s1, s2, 0, 0)
+                return mz[i][j][size]
+    return go(s1, s2, 0, 0, 0)
+
+print(lcs_recursive_memo("abdca", "cbda"))
+
+# now this can htit recursion limits, and we can avoid that using dp
 
 def lcs_dp(s1, s2):
-    # initilize extra row and column so that we can use that as starting point
-
+    # we will initilize the array with one extra row and column
     dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
     max_len = 0
-
-    for i in range(1, len(s1)+1):
-        for j in range(1, len(s2)+1):
+    for i in range(len(s1)+1):
+        for j in range(len(s2)+1):
             if s1[i-1] == s2[j-1]:
-                dp[i][j] = dp[i-1][j-1]  + 1 
-            else:
-                dp[i][j] = max( dp[i][j-1], dp[i-1][j])
-            max_len = max(max_len, dp[i][j])
+                dp[i][j] = dp[i-1][j-1] + 1
+                max_len = max(max_len, dp[i][j])
     return max_len
-
-
-def subsets(lst):
-    if len(lst) == 0:
-        return [[]]
-    else:
-        (x, xs) = lst[0], lst[1:]
-        subs = subsets(xs) 
-        return subs + [ [x] + xxs for xxs in subs]
-
-# print(subsets(['a','b','c']))
-
-
-def valid_bst(lst):
-    stack = []
-    """
-    if a given preorder traveral is stack sortable then it is a preorder traversal 
-    the pattern to avoid is 231
-    """
-    root = 999999
-    for x in lst:
-        if x < root:
-            return False
-        
-        while len(stack) != 0 and stack[-1] < x:
-            root = stack.pop()
-        
-        stack.append(x)
-    return True
-
-
-
-
-
-
-
+print(lcs_dp("abdca", "cbda"))

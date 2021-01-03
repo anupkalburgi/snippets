@@ -16,28 +16,28 @@ c
 sunstring(ab) => [[], [a], [b],[a,b]]
 """
 
-def substring(S):
-    if not S:
-        return [[]]
-    else:
-        (x, xs) = S[0], S[1:]
-        ssub = substring(xs)
-        return ssub + [[x] + xss for xss in ssub] 
+def substrings(lst):
+    """
+    n^2
+    """
+    subbs = []
+    for i in range(len(lst)+1):
+        for j in range(i, len(lst)+1):
+            if len(lst[i:j]) > 0:
+                subbs.append(lst[i:j]) 
+    return subbs
 
-# print(substring("a"))
-# print(substring("ab"))
-# print(substring("abc"))
+def lcs_brute(s1, s2):
+    subs1 = substrings(s1)
+    subs2 = substrings(s2)
+    max_len = 0 
+    for ss1 in subs1:
+        for ss2 in subs2:
+            if ss1 == ss2:
+                max_len = max(len(ss1), max_len)
+    return max_len 
 
-def lcs_brute_force(s1:str, s2: str) -> int:
-    sub1 = substring(s1)
-    sub2 = substring(s2)
-    count = 0
-    for ss1 in sub1:
-        for ss2 in sub2:
-            if "".join(ss1) == "".join(ss2):  
-                print(ss1, ss2)
-                count = max(count, len(ss1))
-    return count
+print(lcs_brute("abdca", "cbda"))
 # print(lcs_brute_force("abdca", "cbda"))
 """
 longest common substring
