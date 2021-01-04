@@ -1,85 +1,57 @@
-"""
-longest common substring
-the chars must be in sequence, and next to each other
-we can generae all the subsequences and then count how many of them are the same
-"""
+
+
+# burte force
+# recursion
+# memoization 
+# dp
+# a binary search based impl - which i have not undertood
+
+# burte force genertate all the subsequences
+# filter out the onces that have only increasing sequences 
+# get the maximum count of that 
+
+# recusion
+## we will have two recursive calls, that
+#  1, if the current element is greater then the previous
+#  2, the possibility of a lis starting at the current poition, leaving the old one
+# the complexity is 2^n a exponential growth
+
+# recusion using memoization
+# the complexity comes down to quadratic time 
+# DP - using a array
+
+def lis_dp(array):
+    dp = [1 for _ in range(len(array)+1)] 
+    max_len = 0
+    for i in range(1, len(array)):
+        for j in range(i):
+            if array[j] < array[i] and dp[j] >= dp[i]:
+                dp[i] = dp[j] + 1
+                max_len = max(max_len, dp[i])
+    return max_len
+
+print(lis_dp([-4, 10, 3, 7, 16]))
+            
+# TODO fix the code in the notes for DP solution
 
 
 def substrings(lst):
-    """
-    n^2
-    """
     subbs = []
     for i in range(len(lst)+1):
         for j in range(i, len(lst)+1):
-            if len(lst[i:j]) > 0:
-                subbs.append(lst[i:j]) # this slicing might not be a constant time operation
+            if len(lst[i:j]) != 0:
+                subbs.append(lst[i:j])
     return subbs
 
-def lcs_brute(s1, s2):
-    subs1 = substrings(s1)
-    subs2 = substrings(s2)
-    # print(subs1)
-    # print(subs2)
-    max_len = 0 
-    for ss1 in subs1:
-        for ss2 in subs2:
-            if ss1 == ss2:
-                max_len = max(len(ss1), max_len)
-    return max_len 
+print(substrings("abc"))
 
-print(lcs_brute("abdca", "cbda"))
-
-
-# now that is brute force, using n2 time, but using recusion we will be getting a 3^solution 
-
-def lcs_recursive(s1, s2, i, j, size):
-    if len(s1) == i or len(s2) == j:
-        return size
+def subsequence(lst):
+    if len(lst) == 0:
+        return [[]]
     else:
-        if s1[i] == s2[j]:
-            size  = lcs_recursive(s1, s2, i+1, j+1, size+1)
-        c1 = lcs_recursive(s1, s2, i, j+1, 0)
-        c2 = lcs_recursive(s1, s2, i+1, j, 0)
-        return max(size, c1, c2)
-print(lcs_recursive("abdca", "cbda", 0, 0 , 0))
+        x, xs = lst[0], lst[1:]
+        subs = subsequence(xs)
+        print(subs)
+        return subs + [[x] + xxs for xxs in subs]
 
-# now that is 3^(m+n) solution
-
-# usign memoization, we can get this down to M+N solution
-
-def lcs_recursive_memo(s1, s2):
-    max_sub = max(len(s1), len(s2))
-    mz = [[[-1 for _ in range(max_sub)] for _ in range(len(s2))] for _ in range(len(s1))]
-
-    def go(s1, s2, i, j, size):
-        if i == len(s1) or j == len(s2):
-            return size
-        else:
-            if mz[i][j][size] == -1:
-                c0 = size 
-                if s1[i] == s2[j]:
-                    c0 = go(s1, s2, i+1,j+1, size+1)
-                c1 = go(s1, s2, i, j+1, 0)
-                c2 = go(s1, s2, i+1, j, 0)
-                mz[i][j][size] = max(c0, c1, c2)
-                return mz[i][j][size]
-            else:
-                return mz[i][j][size]
-    return go(s1, s2, 0, 0, 0)
-
-print(lcs_recursive_memo("abdca", "cbda"))
-
-# now this can htit recursion limits, and we can avoid that using dp
-
-def lcs_dp(s1, s2):
-    # we will initilize the array with one extra row and column
-    dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
-    max_len = 0
-    for i in range(len(s1)+1):
-        for j in range(len(s2)+1):
-            if s1[i-1] == s2[j-1]:
-                dp[i][j] = dp[i-1][j-1] + 1
-                max_len = max(max_len, dp[i][j])
-    return max_len
-print(lcs_dp("abdca", "cbda"))
+print(subsequence([1,2,3]))

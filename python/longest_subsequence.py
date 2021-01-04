@@ -198,8 +198,43 @@ print("Longest increating subsequence ##########################################
 # input 4,2,3,6, 10, 1, 12
 # ouput 5 (2,3,6,10,12)
 # 
-# 
+# brute force generte all the subsequences,
+# the filter out all the once that are not increasing order
+# for i in range(1, len(s)):
+#   if s[i-1] > s[i]:
+#       reuturn False
+#  return true
 ###################################################
+
+
+def subsequence_lst(A):
+    if len(A) == 0:
+        return [[]]
+    else:
+        x, xs = A[0], A[1:]
+        subbs = subsequence_lst(xs)
+        return subbs + [[x]+ xss for xss in subbs]
+    return subbs
+
+def inc_list(s):
+    for i in range(1, len(s)):
+        if s[i-1] > s[i]:
+            return False # a better way you have been to all()
+    return True
+
+def brute_lis(A):
+    a_subs = subsequence_lst(A)
+    inc_lists = []
+    for ll in a_subs:
+        if inc_list(ll):
+            inc_lists.append(ll)
+    return max(map(lambda x: len(x), inc_lists))
+    
+assert brute_lis([4, 2, 3, 6, 10, 1, 12]) == 5
+assert brute_lis([-4, 10, 3, 7, 15]) == 4
+print(brute_lis([4, 2, 3, 6, 10, 1, 12]))
+print(brute_lis([-4, 10, 3, 7, 15]))
+
 
 def lis(A, current, prev):
     """
@@ -217,8 +252,9 @@ def lis(A, current, prev):
 
 assert lis([4, 2, 3, 6, 10, 1, 12], 0, -1) == 5
 assert lis([-4, 10, 3, 7, 15], 0, -1) == 4
-print(lis([4, 2, 3, 6, 10, 1, 12], 0, -1))
-print(lis([-4, 10, 3, 7, 15], 0, -1))
+# print(lis([4, 2, 3, 6, 10, 1, 12], 0, -1))
+# print(lis([-4, 10, 3, 7, 15], 0, -1))
+
 
 def lis_memo(A):
     memo = [[-1 for _ in range(len(A)+1)] for _ in range(len(A)+1)]
