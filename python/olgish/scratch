@@ -1,57 +1,108 @@
+# graph, connected_components , wording needs to be fixed 
 
 
-# burte force
-# recursion
-# memoization 
-# dp
-# a binary search based impl - which i have not undertood
-
-# burte force genertate all the subsequences
-# filter out the onces that have only increasing sequences 
-# get the maximum count of that 
-
-# recusion
-## we will have two recursive calls, that
-#  1, if the current element is greater then the previous
-#  2, the possibility of a lis starting at the current poition, leaving the old one
-# the complexity is 2^n a exponential growth
-
-# recusion using memoization
-# the complexity comes down to quadratic time 
-# DP - using a array
-
-def lis_dp(array):
-    dp = [1 for _ in range(len(array)+1)] 
-    max_len = 0
-    for i in range(1, len(array)):
-        for j in range(i):
-            if array[j] < array[i] and dp[j] >= dp[i]:
-                dp[i] = dp[j] + 1
-                max_len = max(max_len, dp[i])
-    return max_len
-
-print(lis_dp([-4, 10, 3, 7, 16]))
-            
-# TODO fix the code in the notes for DP solution
-
-
-def substrings(lst):
-    subbs = []
+def all_substring(lst):
+    subs = []
     for i in range(len(lst)+1):
-        for j in range(i, len(lst)+1):
-            if len(lst[i:j]) != 0:
-                subbs.append(lst[i:j])
-    return subbs
+        for j in range(i+1, len(lst)+1):
+            subs.append(lst[i:j])
+    return subs
 
-print(substrings("abc"))
 
-def subsequence(lst):
+print(all_substring("abc"))
+
+
+def subsets(lst):
     if len(lst) == 0:
         return [[]]
     else:
         x, xs = lst[0], lst[1:]
-        subs = subsequence(xs)
-        print(subs)
-        return subs + [[x] + xxs for xxs in subs]
+        subs = subsets(xs)
+        return subs + [[x] + xss for xss in subs]
+    
+print(subsets([1,2,3]))
 
-print(subsequence([1,2,3]))
+# fix wording in generate all possible substrings for given string  and fix the code
+
+# this can be solved vis leveled bfs, but the tree needs to be viewed ad graph and not as tee
+# 1. construct a mapping from node -> parent 
+# 2. do bfs for each queue size 
+
+def nodes_at_dist(root, target, l):
+    node_parent_mapping = {} # this will need to be constructed via tree traversal
+
+    def cons_mapping(subtree, parent):
+        if subtree is None:
+            return 
+        else:
+            if parent:
+                node_parent_mapping[subtree.val] = parent
+            cons_mapping(subtree.left, subtree.val)
+            cons_mapping(subtree.right, subtree.val)
+
+    q = [target]
+    visited = set()
+    while q and l > 0:
+        l = l -1 
+        qsize = len(q)
+        for _ in range(qsize):
+            node = q.pop(0)
+            if node in node_parent_mapping.keys() and node not in visited:
+                q.append(node_parent_mapping[node])
+                visited.add(node_parent_mapping[node])
+            if node.left and node.left not in visited:
+                q.append(node.left)
+            if node.right and node.right not in visited:
+                q.append(node.right)
+    return q
+
+# number of inserts or deletes needed to convert a string to another
+# 1. ns = find the longest subsequence[s1, s2]
+# 2. delete non common chars  len(s1) - ns  
+# 3. insert non common chars len(s2) - ns
+
+def lcs(s1, s2, i, j, size ):
+    if i == len(s1) or j == len(s2):
+        return size
+    else:
+        if s1[i] == s2[j]:
+            return lcs(s1, s2, i+1, j+1, size+1)
+        else:
+            return max(
+                lcs(s1, s2, i, j+1, size),
+                lcs(s1, s2, i+1, j, size)
+            )
+def del_ins(s1, s2):
+    ns = lcs(s1, s2, 0, 0, 0)
+    return ((len(s1)- ns), (len(s2)-ns))
+
+print(del_ins("abc", "fbc"))
+
+
+
+def lis(nums, prev, curr):
+    if len(nums) == curr:
+        return 0
+    else:
+        c1 = 0
+        if nums[prev] < nums[curr] or prev == -1:
+            c1 = 1+lis(nums, curr, curr+1)
+        c2 = lis(nums, prev, curr+1)
+        return max(c1, c2)
+
+print(lis([-4, 10, 3, 7, 15], -1, 0))
+
+
+"""
+with rentals as (
+    select customer_id,
+        rental_ts,
+        ROW_NUMBER() over (partition by customer_id order by rental_ts),
+    from rental
+)
+
+select customer_id, date(rental_ts) 
+from rentals
+where row_number = 10 
+
+"""
