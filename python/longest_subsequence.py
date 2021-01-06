@@ -155,6 +155,7 @@ assert longest_subsequence("abdca", "cbda", 0 , 0) == 3
 assert longest_subsequence("passport", "ppsspt", 0, 0) == 5
 assert longest_subsequence_memo("abdca", "cbda") == 3
 assert longest_subsequence_memo("passport", "ppsspt") == 5
+assert longest_subsequence_dp("abdca", "cbda") == 3
 print("abdca", "cbda" , "expect 3 -> lcs ->>", longest_subsequence("abdca", "cbda", 0 , 0)) 
 print("passport", "ppsspt", "expect 5 -> lcs_memo ->>" , longest_subsequence_memo("passport", "ppsspt"))
 
@@ -193,7 +194,7 @@ print(inserts_deletes_lcs("abdca", "cbda"))
 print(inserts_deletes_lcs("passport", "ppsspt"))
 
 
-print("Longest increating subsequence ###################################################")
+print("Longest increasing subsequence ###################################################")
 ###################################################
 # input 4,2,3,6, 10, 1, 12
 # ouput 5 (2,3,6,10,12)
@@ -306,3 +307,18 @@ assert lis_dp([4, 2, 3, 6, 10, 1, 12]) == 5
 assert lis_dp([-4, 10, 3, 7, 15]) == 4
 print(lis_dp([4, 2, 3, 6, 10, 1, 12]))
 print(lis_dp([-4, 10, 3, 7, 15]))
+
+
+print("Longest increating subsequence ###################################################")
+###################################################
+# input 4,2,3,6, 10, 1, 12
+# ouput 5 (2,3,6,10,12)
+# 
+# brute force generte all the subsequences,
+# the filter out all the once that are not increasing order
+# for i in range(1, len(s)):
+#   if s[i-1] > s[i]:
+#       reuturn False
+#  return true
+###################################################
+

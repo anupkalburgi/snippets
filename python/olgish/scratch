@@ -1,108 +1,103 @@
-# graph, connected_components , wording needs to be fixed 
+# longest subsequence
+# burte force , recursion, memoization and dp 
 
-
-def all_substring(lst):
-    subs = []
-    for i in range(len(lst)+1):
-        for j in range(i+1, len(lst)+1):
-            subs.append(lst[i:j])
-    return subs
-
-
-print(all_substring("abc"))
-
-
-def subsets(lst):
+def subsequence(lst):
     if len(lst) == 0:
         return [[]]
     else:
         x, xs = lst[0], lst[1:]
-        subs = subsets(xs)
+        subs = subsequence(xs)
         return subs + [[x] + xss for xss in subs]
-    
-print(subsets([1,2,3]))
+def burte_lcs(s1, s2):
+    # produce all the subsequences filter the once that match and get the largest one 
+    s1s = subsequence(s1)
+    s2s = subsequence(s2)
+    max_len = 0 
+    for ss1 in s1s:
+        for ss2 in s2s:
+            if ss1 == ss2:
+                max_len = max(max_len, len(ss1))
+    return max_len
 
-# fix wording in generate all possible substrings for given string  and fix the code
+# recursion 
 
-# this can be solved vis leveled bfs, but the tree needs to be viewed ad graph and not as tee
-# 1. construct a mapping from node -> parent 
-# 2. do bfs for each queue size 
-
-def nodes_at_dist(root, target, l):
-    node_parent_mapping = {} # this will need to be constructed via tree traversal
-
-    def cons_mapping(subtree, parent):
-        if subtree is None:
-            return 
-        else:
-            if parent:
-                node_parent_mapping[subtree.val] = parent
-            cons_mapping(subtree.left, subtree.val)
-            cons_mapping(subtree.right, subtree.val)
-
-    q = [target]
-    visited = set()
-    while q and l > 0:
-        l = l -1 
-        qsize = len(q)
-        for _ in range(qsize):
-            node = q.pop(0)
-            if node in node_parent_mapping.keys() and node not in visited:
-                q.append(node_parent_mapping[node])
-                visited.add(node_parent_mapping[node])
-            if node.left and node.left not in visited:
-                q.append(node.left)
-            if node.right and node.right not in visited:
-                q.append(node.right)
-    return q
-
-# number of inserts or deletes needed to convert a string to another
-# 1. ns = find the longest subsequence[s1, s2]
-# 2. delete non common chars  len(s1) - ns  
-# 3. insert non common chars len(s2) - ns
-
-def lcs(s1, s2, i, j, size ):
-    if i == len(s1) or j == len(s2):
-        return size
-    else:
-        if s1[i] == s2[j]:
-            return lcs(s1, s2, i+1, j+1, size+1)
-        else:
-            return max(
-                lcs(s1, s2, i, j+1, size),
-                lcs(s1, s2, i+1, j, size)
-            )
-def del_ins(s1, s2):
-    ns = lcs(s1, s2, 0, 0, 0)
-    return ((len(s1)- ns), (len(s2)-ns))
-
-print(del_ins("abc", "fbc"))
-
-
-
-def lis(nums, prev, curr):
-    if len(nums) == curr:
+def lcs_rec(s1, s2, i, j):
+    if len(s1) == i or len(s2) == j:
         return 0
     else:
         c1 = 0
-        if nums[prev] < nums[curr] or prev == -1:
-            c1 = 1+lis(nums, curr, curr+1)
-        c2 = lis(nums, prev, curr+1)
-        return max(c1, c2)
+        if s1[i] == s2[j]:
+            c1 = 1 + lcs_rec(s1, s2, i+1, j+1)
+        c2 = lcs_rec(s1, s2, i+1, j)
+        c3 = lcs_rec(s1, s2, i, j+1)
+        return max(c1, c2, c3)
 
-print(lis([-4, 10, 3, 7, 15], -1, 0))
+# we can use memoization to avoid recomputing the subtrees 
+
+# but jumping to dp problem 
+def lcs_dp(s1, s2):
+    dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
+    # using row 0 and col 0 as starting points 
+    # WARNING: the string compare starts form the 1st elm not the 2nd 
+    max_len = 0
+
+    for i in range(1, len(s1)+1):
+        for j in range(1, len(s2)+1):
+            if s1[i-1] == s2[j-1]:
+                dp[i][j] = 1 + dp[i-1][j-1]
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+            max_len = max(dp[i][j], max_len)
+    
+    return max_len
+
+print(lcs_rec("abdca", "cbda", 0 , 0))
+print(lcs_dp("abdca", "cbda"))
+# print(longest_subsequence_dp("abdca", "cbda"))
+
+# number of inserts and deletes necessary 
+# s1 , s2 lcs => ln
+# s1 => s2
+# s1 - ln
+# s2 - ln 
 
 
-"""
-with rentals as (
-    select customer_id,
-        rental_ts,
-        ROW_NUMBER() over (partition by customer_id order by rental_ts),
-    from rental
-)
+# spiral matrix
+def spirl(grid):
+    startRow = 0
+    endRow  = len(grid)
+    startCol = 0
+    endCol = len(grid[0])
+    while startRow <= endRow and startCol <= endCol:
+        for col in range(startCol, endCol):
+            print(startRow, col)
+        
+        for row in range(startRow, endRow):
+            print(row, endCol)
+        
+        for col in range(endCol, startCol, -1):
+            print(row, col)
+        
+        for row  in range(endRow, startRow, -1):
+            print(row, col)
+        startRow =  startRow +1
+        endRow = endRow -1
+        startCol = startCol + 1
+        endCol = endCol -1
 
-select customer_id, date(rental_ts) 
-from rentals
-where row_number = 10 
+# stack sorting
+# pattern to avoid  : 231 
 
-"""
+def stack_sort(listr):
+    stack = []
+    result = []
+    for x in listr:
+        while stack and stack[0] < x:
+            result.append(stack.pop())
+        stack.append(x)
+    
+    while stack:
+        result.append(stack.pop())
+    return result
+    
+
