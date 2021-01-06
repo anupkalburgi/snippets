@@ -309,16 +309,74 @@ print(lis_dp([4, 2, 3, 6, 10, 1, 12]))
 print(lis_dp([-4, 10, 3, 7, 15]))
 
 
-print("Longest increating subsequence ###################################################")
+print("Longest sum increating subsequence ###################################################")
 ###################################################
-# input 4,2,3,6, 10, 1, 12
-# ouput 5 (2,3,6,10,12)
-# 
-# brute force generte all the subsequences,
-# the filter out all the once that are not increasing order
-# for i in range(1, len(s)):
-#   if s[i-1] > s[i]:
-#       reuturn False
-#  return true
+
 ###################################################
+
+
+def lcs_sum(lst, prev, curr):
+    """
+    this is calculating largest sum longest increasing subsequence 
+    """
+    if curr == len(lst):
+        return 0
+    else:
+        c1 = 0
+        if prev == -1 or lst[prev] < lst[curr]:
+            c1 = lst[curr] + lcs_sum(lst, curr, curr+1)
+        c2 = lcs_sum(lst, prev, curr+1)
+        return max(c1, c2)
+
+print(lcs_sum([4, 1, 2, 6, 10, 1, 12], -1 , 0))
+print(lcs_sum([-4, 10, 3, 7, 15], -1, 0))
+assert lcs_sum([4, 1, 2, 6, 10, 1, 12], -1 , 0) == 32
+assert lcs_sum([-4, 10, 3, 7, 15], -1, 0) == 25
+
+def lcs_sum_memo(lst_test):
+    tmo = go(lst_test, -1, 0, 0, [[-1 for _ in range(len(lst_test))] for _ in range(len(lst_test))])
+    # print(dp)
+    return tmo
+
+def go(lst, prev, curr, acc_sum, dp_mem):
+    if curr == len(lst):
+        return acc_sum
+    else:
+        if dp_mem[prev][curr] == -1:
+            c1 = acc_sum
+            if prev == -1 or lst[prev] < lst[curr]:
+                c1 =  lst[curr] + go(lst, curr, curr+1, acc_sum , dp_mem)
+            c2 = go(lst, prev, curr+1, acc_sum, dp_mem)
+            dp_mem[prev][curr] = max(c1, c2)
+            return max(c1, c2)
+        else:
+            return dp_mem[prev][curr]
+    
+print("-----------")  
+print(lcs_sum_memo([4, 1, 2, 6, 10, 1, 12]))
+print(lcs_sum_memo([-4, 10, 3, 7, 15]))
+assert lcs_sum_memo([4, 1, 2, 6, 10, 1, 12]) == 32
+assert lcs_sum_memo([-4, 10, 3, 7, 15]) == 25
+
+
+
+def lis_sum_dp(lst):
+    dp = [0 for _ in range(len(lst))]
+    dp[0] = lst[0]
+    max_sum = lst[0]
+    for i in range(1, len(lst)):
+        dp[i] = lst[i]
+        for j in range(i):
+            if lst[i] > lst[j] and dp[i] <= dp[j] + lst[i]:
+                dp[i] = dp[j] + lst[i]  
+            max_sum = max(max_sum, dp[i])
+    return max_sum
+
+
+
+print("-----------")  
+print(lis_sum_dp([4, 1, 2, 6, 10, 1, 12]))
+print(lis_sum_dp([-4, 10, 3, 7, 15]))
+assert lis_sum_dp([4, 1, 2, 6, 10, 1, 12]) == 32
+assert lis_sum_dp([-4, 10, 3, 7, 15]) == 25
 
