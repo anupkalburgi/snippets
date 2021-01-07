@@ -1,103 +1,97 @@
-# longest subsequence
-# burte force , recursion, memoization and dp 
-
-def subsequence(lst):
-    if len(lst) == 0:
-        return [[]]
-    else:
-        x, xs = lst[0], lst[1:]
-        subs = subsequence(xs)
-        return subs + [[x] + xss for xss in subs]
-def burte_lcs(s1, s2):
-    # produce all the subsequences filter the once that match and get the largest one 
-    s1s = subsequence(s1)
-    s2s = subsequence(s2)
-    max_len = 0 
-    for ss1 in s1s:
-        for ss2 in s2s:
-            if ss1 == ss2:
-                max_len = max(max_len, len(ss1))
-    return max_len
-
-# recursion 
-
-def lcs_rec(s1, s2, i, j):
-    if len(s1) == i or len(s2) == j:
+def lis_sum(lst, prev, curr):
+    if curr == len(lst):
         return 0
     else:
         c1 = 0
-        if s1[i] == s2[j]:
-            c1 = 1 + lcs_rec(s1, s2, i+1, j+1)
-        c2 = lcs_rec(s1, s2, i+1, j)
-        c3 = lcs_rec(s1, s2, i, j+1)
-        return max(c1, c2, c3)
+        if prev == -1 or lst[prev] < lst[curr]:
+            c1 = lst[curr] + lis_sum(lst, curr, curr+1)
+        c2 = lis_sum(lst, prev, curr+1)
+        return max(c1 , c2)
 
-# we can use memoization to avoid recomputing the subtrees 
 
-# but jumping to dp problem 
-def lcs_dp(s1, s2):
-    dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
-    # using row 0 and col 0 as starting points 
-    # WARNING: the string compare starts form the 1st elm not the 2nd 
-    max_len = 0
+def lis_sum_memo(lst, prev, curr, dp):
+    if curr == len(lst):
+        return 0
+    else:
+        if dp[prev][curr] == -1:
+            c1 = 0
+            if lst[prev] < lst[curr] or prev == -1:
+                c1 = lst[curr] + lis_sum_memo(lst, curr, curr+1, dp)
+            c2 = lis_sum_memo(lst, prev, curr+1, dp)
+            dp[prev][curr] = max(c1, c2)
+        return dp[prev][curr]
 
-    for i in range(1, len(s1)+1):
-        for j in range(1, len(s2)+1):
-            if s1[i-1] == s2[j-1]:
-                dp[i][j] = 1 + dp[i-1][j-1]
-            else:
-                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-            max_len = max(dp[i][j], max_len)
+
+
+def lis_sum_dp(lst):
+    dp = [0 for i in range(len(lst))]
+    max_sum = 0
+    for i in range(1, len(lst)):
+        dp[i] = lst[i]
+        for prev in range(i):
+            if lst[prev] < lst[i] and dp[prev] + lst[i] >= dp[i]:
+                dp[i] = dp[prev] + lst[i]
+        max_sum = max(max_sum, dp[i])
+    return max_sum
     
-    return max_len
+A = [-4, 10, 3, 7, 15]
+dp = [[-1 for i in range(len(A))] for _ in range(len(A))]
+print(lis_sum(A, -1, 0))
+print(lis_sum_memo(A, -1, 0, dp))
+print(lis_sum_dp(A))
 
-print(lcs_rec("abdca", "cbda", 0 , 0))
-print(lcs_dp("abdca", "cbda"))
-# print(longest_subsequence_dp("abdca", "cbda"))
+# TODO Three number sum of a unsorted array, write an example. I have not Idea what that means 
+# there is need for ordering, the questions is not detailed. 
+# if ordering is not important, sort he array first
+# it going to be n2 solution, 
+# for i in range()
+# if [i + l + h ] == target:
+# if [i + l + h] < target
+#    l = l + 1 
+# if [i + l + h ] > target 
+    # h -1
 
-# number of inserts and deletes necessary 
-# s1 , s2 lcs => ln
-# s1 => s2
-# s1 - ln
-# s2 - ln 
+# fiding a sqrt has a nice base condition
+# sqrt(x one 1 or less) is x
 
+def sqrt_rec(x):
+    if x <= 1:
+        return x
+    else:
+        left = sqrt_rec( x >> 2) << 1
+        right = left + 1
+        return left if right * right > x else right
+print(sqrt_rec(9))
+print(sqrt_rec(8))
 
-# spiral matrix
-def spirl(grid):
-    startRow = 0
-    endRow  = len(grid)
-    startCol = 0
-    endCol = len(grid[0])
-    while startRow <= endRow and startCol <= endCol:
-        for col in range(startCol, endCol):
-            print(startRow, col)
-        
-        for row in range(startRow, endRow):
-            print(row, endCol)
-        
-        for col in range(endCol, startCol, -1):
-            print(row, col)
-        
-        for row  in range(endRow, startRow, -1):
-            print(row, col)
-        startRow =  startRow +1
-        endRow = endRow -1
-        startCol = startCol + 1
-        endCol = endCol -1
+def sqrt_bs(x, l, h):
+    print("sqrt(", x, l, h)
+    if l >= h:
+        return l
+    else:
+        mid = (l + h ) // 2
+        sqrd = (mid+1) * (mid+1)
 
-# stack sorting
-# pattern to avoid  : 231 
+        if sqrd == x:
+            return mid+1
+        elif sqrd > x:
+            return sqrt_bs(x, l, mid)
+        else:
+            return sqrt_bs(x, mid+1, h)
+print("------------")
+print(sqrt_bs(9, 0 , 9))
+print(sqrt_bs(8, 0 , 8))
+"""0
+9
+0 9
+    mid = 4
+    sqrd = 25
+    sqrt(9, 0, 4)
+        mid = 2 
+        sqrd = 
 
-def stack_sort(listr):
-    stack = []
-    result = []
-    for x in listr:
-        while stack and stack[0] < x:
-            result.append(stack.pop())
-        stack.append(x)
-    
-    while stack:
-        result.append(stack.pop())
-    return result
-    
-
+"""
+# TODO python things to remember, what is differece between mid+1 * mid*1
+# TODO removet that cell thing Cytoplasm
+preparations 
+expedited 
