@@ -1,55 +1,33 @@
 """
-Elavator
-    Queue Style, 
-        inefficent
-        
-    Boolean Array for all the floors, if the boolean is set, stop open and move 
-            at the end of the floor stop and turn the direction
-        - [-] always moving
+mutual exlusion is important
+and to do that, we use synchronized, which gives exclusive acess to critical section
 
-    Least Seek Time, 
-        if there are multiple requests made go the one that is nearest , based on array 
-        this avoid always moving 
-        [-] this might lead to a starvation situation, where the exterme ends will keep getting ingored
+this.synchronized()
 
-   modification of boolean array, Look ahead, instead of always moving, only moves when there is request to be served 
-   Thus reducing the always moving motion
+synchronized (
 
+)
+
+intersection 
+intuition 
 """
 
-# largest sum of increasing subsequence
-# produce all the subsequences 
-# filter the incresing sequences, A[i] > A[i-1]
-# get the largest sum, this is again an n2 algorithm, with hight contants
+# sort it, 
+def sum_three(A, target ):
+    answers = []
+    for idx, elm in enumerate(A):
+        l = i+1
+        h = len(A) -1
+        while l < h:
+            eml_sum = elm + A[l] + A[h]
+            if elm_sum == target:
+                answers.append([elm, A[l], A[h])
+                l = l+1
+                h = h-1
+            if elm_sum > target:
+                h = h -1 
+            else:
+                l = l + 1
+    return elm_sum
 
-# also can be solved via recursion 
-#  curr == len(A) 0 
-#  max( 
-#   A[prev] < A[curr] liss(A, curr, curr+1)
-#   liss(A, prev, curr+1)
-
-
-
-# next use memoization 
-def liss_dp(lst):
-    dp = [0 for _ in range(len(lst))]
-    max_sum = 0
-    for curr in range(len(lst)):
-        dp[curr] = lst[curr]
-        for prev in range(curr):
-            if lst[curr] > lst[prev] and dp[curr] < dp[prev] + lst[curr]:
-                dp[curr] = dp[prev] + lst[curr]
-            max_sum = max(max_sum, dp[curr])
-    return max_sum
-
-def ff(ss: str) -> int:
-# stack overflow limit, we can use DP, that is still going to be n^2
-
-# TODO
-# bit maniuplations
-# xor to  find a uninque values in a array where every element has one duplicate 
-# does not work for more than 3 dups
-
-# comparing the list[string] to another list[strinn] use an iterator object to go over, and keep giving the next char
-
-# TODO fix product excluding self -> Done
+#
