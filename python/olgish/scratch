@@ -1,97 +1,55 @@
-def lis_sum(lst, prev, curr):
-    if curr == len(lst):
-        return 0
-    else:
-        c1 = 0
-        if prev == -1 or lst[prev] < lst[curr]:
-            c1 = lst[curr] + lis_sum(lst, curr, curr+1)
-        c2 = lis_sum(lst, prev, curr+1)
-        return max(c1 , c2)
+"""
+Elavator
+    Queue Style, 
+        inefficent
+        
+    Boolean Array for all the floors, if the boolean is set, stop open and move 
+            at the end of the floor stop and turn the direction
+        - [-] always moving
 
+    Least Seek Time, 
+        if there are multiple requests made go the one that is nearest , based on array 
+        this avoid always moving 
+        [-] this might lead to a starvation situation, where the exterme ends will keep getting ingored
 
-def lis_sum_memo(lst, prev, curr, dp):
-    if curr == len(lst):
-        return 0
-    else:
-        if dp[prev][curr] == -1:
-            c1 = 0
-            if lst[prev] < lst[curr] or prev == -1:
-                c1 = lst[curr] + lis_sum_memo(lst, curr, curr+1, dp)
-            c2 = lis_sum_memo(lst, prev, curr+1, dp)
-            dp[prev][curr] = max(c1, c2)
-        return dp[prev][curr]
-
-
-
-def lis_sum_dp(lst):
-    dp = [0 for i in range(len(lst))]
-    max_sum = 0
-    for i in range(1, len(lst)):
-        dp[i] = lst[i]
-        for prev in range(i):
-            if lst[prev] < lst[i] and dp[prev] + lst[i] >= dp[i]:
-                dp[i] = dp[prev] + lst[i]
-        max_sum = max(max_sum, dp[i])
-    return max_sum
-    
-A = [-4, 10, 3, 7, 15]
-dp = [[-1 for i in range(len(A))] for _ in range(len(A))]
-print(lis_sum(A, -1, 0))
-print(lis_sum_memo(A, -1, 0, dp))
-print(lis_sum_dp(A))
-
-# TODO Three number sum of a unsorted array, write an example. I have not Idea what that means 
-# there is need for ordering, the questions is not detailed. 
-# if ordering is not important, sort he array first
-# it going to be n2 solution, 
-# for i in range()
-# if [i + l + h ] == target:
-# if [i + l + h] < target
-#    l = l + 1 
-# if [i + l + h ] > target 
-    # h -1
-
-# fiding a sqrt has a nice base condition
-# sqrt(x one 1 or less) is x
-
-def sqrt_rec(x):
-    if x <= 1:
-        return x
-    else:
-        left = sqrt_rec( x >> 2) << 1
-        right = left + 1
-        return left if right * right > x else right
-print(sqrt_rec(9))
-print(sqrt_rec(8))
-
-def sqrt_bs(x, l, h):
-    print("sqrt(", x, l, h)
-    if l >= h:
-        return l
-    else:
-        mid = (l + h ) // 2
-        sqrd = (mid+1) * (mid+1)
-
-        if sqrd == x:
-            return mid+1
-        elif sqrd > x:
-            return sqrt_bs(x, l, mid)
-        else:
-            return sqrt_bs(x, mid+1, h)
-print("------------")
-print(sqrt_bs(9, 0 , 9))
-print(sqrt_bs(8, 0 , 8))
-"""0
-9
-0 9
-    mid = 4
-    sqrd = 25
-    sqrt(9, 0, 4)
-        mid = 2 
-        sqrd = 
+   modification of boolean array, Look ahead, instead of always moving, only moves when there is request to be served 
+   Thus reducing the always moving motion
 
 """
-# TODO python things to remember, what is differece between mid+1 * mid*1
-# TODO removet that cell thing Cytoplasm
-preparations 
-expedited 
+
+# largest sum of increasing subsequence
+# produce all the subsequences 
+# filter the incresing sequences, A[i] > A[i-1]
+# get the largest sum, this is again an n2 algorithm, with hight contants
+
+# also can be solved via recursion 
+#  curr == len(A) 0 
+#  max( 
+#   A[prev] < A[curr] liss(A, curr, curr+1)
+#   liss(A, prev, curr+1)
+
+
+
+# next use memoization 
+def liss_dp(lst):
+    dp = [0 for _ in range(len(lst))]
+    max_sum = 0
+    for curr in range(len(lst)):
+        dp[curr] = lst[curr]
+        for prev in range(curr):
+            if lst[curr] > lst[prev] and dp[curr] < dp[prev] + lst[curr]:
+                dp[curr] = dp[prev] + lst[curr]
+            max_sum = max(max_sum, dp[curr])
+    return max_sum
+
+def ff(ss: str) -> int:
+# stack overflow limit, we can use DP, that is still going to be n^2
+
+# TODO
+# bit maniuplations
+# xor to  find a uninque values in a array where every element has one duplicate 
+# does not work for more than 3 dups
+
+# comparing the list[string] to another list[strinn] use an iterator object to go over, and keep giving the next char
+
+# TODO fix product excluding self -> Done
