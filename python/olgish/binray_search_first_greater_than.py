@@ -21,8 +21,8 @@ def first_element_smaller_than(A, target):
 
     if A[mid] >= target:
             right = mid
-        else:
-            left = mid + 1
+    else:
+        left = mid + 1
     return left -1
 
 print(first_element_smaller_than([1,2,4,5], 3))
