@@ -1,154 +1,97 @@
-# s1[::-1]
-# mid  = (left + right ) // 2
-# mid = left + ((right - left) // 2)
-
-# closed left, open right
-# very useful when we have to find an index of the first smaller element than the given
-# this kind of useful, when we want to find a insert position of a element, that is already sorted
-
-def smaller_element_index(A, target):
-    # 2 5 8 9, target=3 => 0 because 2 is first smallest element
-    left, right = 0, len(A)-1
-
-    while left < right:
-        mid = (left + right )  // 2
-
-        if A[mid] >= target:
-            right = mid
-        else:
-            left = mid+1 
-    return left - 1   
-
-print(smaller_element_index([1, 2, 5, 8, 9], 3))
-assert smaller_element_index([1, 2, 5, 8, 9], 3) == 1
-
-def first_greater_than(A, target):
-    l, r = 0, len(A)-1
-
-    while l < r:
-        mid = (l + r ) // 2
-
-        if A[mid] > target:
-            r = mid
-        else:
-            l = mid+1
-    return l
-    
 """
-l = 0 , r = 4 
-mid = 2 
-
-A[2](5) > target: 
-    r = 2
-
-l=0
-r=2
-mid = 0 +  2 // 2
-1
-A[1](2) < target
-    l = 2
-l=2
-r=2 
-"""
-
-print(first_greater_than([1, 2, 5, 8, 9], 3))
-assert first_greater_than([1, 2, 5, 8, 9], 3) == 2
-
-
-# def merge(left, right):
-#     if len(left)==0:
-#         return right
-#     if len(right)==0:
-#         return left
-#     else:
-#         lh, lt = left[0], left[1:]
-#         rh, rt = right[0], right[1:]
-
-#         if lh < rh: # we are doing asce
-#             return [lh] + merge(lt, right)
-#         else:
-#             return [rh] + merge(left, rt)
-
-# def merge_sort(A):
-#     if len(A) <= 1:
-#         return A
-#     else:
-#         mid = len(A) // 2
-#         left = merge_sort(A[:mid])
-#         right = merge_sort(A[mid:])
-#         return merge(left, right)
-
-# print(merge_sort([2, 5, 1, 2, 4]))
-# assert merge_sort([2, 5, 1, 2, 4]) == [1, 2, 2, 4, 5]
+count the number of elements  smaller on the right, 
+here the insight is to use merege sort to find the number of jumps that are happening from right to left partition
+use the num class for easy mutation instead of named tuple 
 
 """
-it is stable sort, that means, it tries to retain the elements where they are 
-and can be customized to a great deal. esp when we are trying to find out how many elements are 
-smaller than the current element
-"""
-
-"""
-interfering 
-exclusive access to shared resources
-coercive - use of force
-quarters 
-"""
-
-
-"""
-counting the number elements that are smaller than the currnt
-the idea is,well are multiple of these, but the most intituive one seems to be the merge sort one
-we have to count the number of elements that are smaller than the current, on to the right
-so that means we will have to count a number of time a element move over from right to left, 
-using a data class record for his makes it easy to keep track of original index,
-can also be done using tuple but that is going to be annoying 
-"""
-
-# TODO add this to random things to rem
-# import collections
-# Num = collections.namedtuple('Num', ['num', 'idx', 'count'])
-# nameed tuple can't be used when you have to mutate a variable
 class Num:
-    def __init__(self, val, index):
-        self.num = val
-        self.idx = index
+    def __init__(self, value, inx, count):
+        self.num = value 
+        self.idx = inx
         self.count = 0
     def __repr__(self):
-        return f'Num(num={self.num},idx={self.idx},count={self.count}'
+        return f'Num(num={self.num}, idx={self.idx}, count={self.count})'
 
-def merge(left, right):
-    if len(left)==0:
+
+def merge(left , right):
+    if len(left) == 0:
         return right
-    if len(right)==0:
+    if len(right) == 0:
         return left
     else:
         lh, lt = left[0], left[1:]
         rh, rt = right[0], right[1:]
-
-        if lh.num < rh.num: # we are doing asce
+        if lh.num < rh.num: # no jump
             return [lh] + merge(lt, right)
-        else:
+        else: # juming over the left element, there are elements that are smaller
             for l in left:
-                l.count = l.count + 1
+                l.count= l.count + 1
             return [rh] + merge(left, rt)
+    
 
 def merge_sort(A):
     if len(A) <= 1:
-        return A
-    else:
-        mid = len(A) // 2
+        return A 
+    else: # divide
+        mid = len(A) // 2 
         left = merge_sort(A[:mid])
         right = merge_sort(A[mid:])
-        return merge(left, right)
-    
+        return merge(left, right) #conquer
 A = [5, 2, 6, 1]
 nums = []
 for idx, num in enumerate(A):
-    nums.append(Num(num, idx))
-
+    nums.append(Num(num, idx, 0))
+print(nums)
 ssr = merge_sort(nums)
-print(ssr)
-srt_num_cnt = sorted(ssr, key = lambda x: x.idx)
-print([x.count for x in srt_num_cnt])
-print([x.num for x in srt_num_cnt])
-print([x.idx for x in srt_num_cnt])
+srted = sorted(ssr, key=lambda x: x.idx)
+print([x.count for x in srted])
+
+
+
+"""
+three number combination
+
+"""
+
+def three_comb(A, target):
+    xs = sorted(A)
+    answers = []
+    for i in range(xs):
+        l = i+1
+        r = len(xs)-1
+        while l <= r:
+            ssum = sum(xs[i], xs[l], xs[r])
+            if ssum == target:
+                answers.append(i, l, r)
+                l = l+1
+                r = r+1
+            if ssum < target:
+                l = l  + 1
+            else:
+                r = r-1
+    return answers
+
+
+import collections
+Point = collections.namedtuple('Point', field_names=['x', 'y'])
+# mutation is not possile
+
+def smaller_than(A, target):
+    l, r = 0, len(A)-1
+
+    while l < r:
+        mid = (l + r) // 2
+
+        if A[mid] >= target:
+            r = mid
+        else: # A[mid] > target
+            l =  mid+1
+    return l
+
+print(smaller_than([1, 2, 4, 7, 9], 3)) # 1
+print(smaller_than([1, 2, 4, 7, 9], 8)) # 3
+
+"""
+convinced
+convinced
+"""
