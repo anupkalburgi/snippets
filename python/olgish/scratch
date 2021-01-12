@@ -1,97 +1,162 @@
 """
-count the number of elements  smaller on the right, 
-here the insight is to use merege sort to find the number of jumps that are happening from right to left partition
-use the num class for easy mutation instead of named tuple 
+list all paths in a binary tree
+[
+    [8,6,5]
+    [8,6,3]
+    [8,5,10]
+]
 
+if node.left is none if node.right is not # to avoid dulicates
+- using an accumulator
+- using a clean recursion
 """
-class Num:
-    def __init__(self, value, inx, count):
-        self.num = value 
-        self.idx = inx
-        self.count = 0
+
+class Node:
+    def __init__(self, value):
+        self.val = value
+        self.right = None
+        self.left = None
     def __repr__(self):
-        return f'Num(num={self.num}, idx={self.idx}, count={self.count})'
+        return f'Node(val={self.val}, right={self.left}, right={self.right})'
 
+# import collections 
+# Node = collections.namedtuple('Node', field_names=['val','left', 'right']
 
-def merge(left , right):
-    if len(left) == 0:
-        return right
-    if len(right) == 0:
-        return left
+def path_rec(subtree, all_paths, curr_path):   
+    if subtree is None:
+        return all_paths # incomplete path ? becaue we are not reaching none
+    elif subtree.left is None and subtree.right is None:
+        return all_paths + [curr_path + [subtree.val]]
     else:
-        lh, lt = left[0], left[1:]
-        rh, rt = right[0], right[1:]
-        if lh.num < rh.num: # no jump
-            return [lh] + merge(lt, right)
-        else: # juming over the left element, there are elements that are smaller
-            for l in left:
-                l.count= l.count + 1
-            return [rh] + merge(left, rt)
-    
+        left = path_rec(subtree.left, all_paths, curr_path + [subtree.val])
+        right = path_rec(subtree.right, all_paths, curr_path + [subtree.val])
+        return left + right
 
-def merge_sort(A):
-    if len(A) <= 1:
-        return A 
-    else: # divide
-        mid = len(A) // 2 
-        left = merge_sort(A[:mid])
-        right = merge_sort(A[mid:])
-        return merge(left, right) #conquer
-A = [5, 2, 6, 1]
-nums = []
-for idx, num in enumerate(A):
-    nums.append(Num(num, idx, 0))
-print(nums)
-ssr = merge_sort(nums)
-srted = sorted(ssr, key=lambda x: x.idx)
-print([x.count for x in srted])
+def path_non_tail(subtree):   
+    if subtree is None:
+        return [[]] # incomplete path ? becaue we are not reaching none
+    elif subtree.left is None and subtree.right is None:
+        return [[subtree.val]]
+    else: # in this case there will have to be a if left check 
+        left = [[subtree.val] + xss for xss in path_non_tail(subtree.left)]
+        right = [[subtree.val] + xss for xss in path_non_tail(subtree.right)]
+        return left + right 
 
+root = Node(8)
+n6 = Node(6)
+n5 = Node(5)
+n3 = Node(3)
+n15  = Node(15)
+n10 = Node(10)
+
+root.left = n6
+root.right = n15
+
+n6.left = n5
+n6.right = n3
+
+n15.right = n10
+print(path_rec(root, [], []))
+# print(path_non_tail(root))
+
+"""
+lesson, we can collected the entire path only the the end of the path,
+and using tail collection works best  when we have to get all paths
+
+"""
 
 
 """
-three number combination
+longest increasing subseuence
+1. Brute force
+    - generate all subsequeces
+    - filter the only one that are incresing
+    - get he larget one by size
+    (n^2 sol) not any better any thing else but constants are hight
+    but very inefficint if the the data is dynamic(insert and delete), in that case somehing like 
+    segement trees would be more benificial
+    using balanced binary tree
 
+2. Recurion
+    - at every element, there are two options 
+        - it is part of existing longest increasing sequence, if it is > prev
+        - else, a new lis can be start from there
+    - there are some problems that will be recomputed often becaue of the recursion tree, 
+    2^n solution  [exponential]
+     (how to draw a recursion tree on the pad )
+3. we can use memoization, to cache the results that are being recomputed often
+    n^2 [quadratic]
+4. we can use dp, where we with elm1, and go start from 0 to i, and count if elm are higher
+    - avoids stackoverflow
+    n^2, 
 """
 
-def three_comb(A, target):
-    xs = sorted(A)
-    answers = []
-    for i in range(xs):
-        l = i+1
-        r = len(xs)-1
-        while l <= r:
-            ssum = sum(xs[i], xs[l], xs[r])
-            if ssum == target:
-                answers.append(i, l, r)
-                l = l+1
-                r = r+1
-            if ssum < target:
-                l = l  + 1
-            else:
-                r = r-1
-    return answers
+def subs(A):
+    if len(A) == 0:
+        return [[]]
+    x, xs = A[0], A[1:]
+    xss = subs(xs)
+    return [[x]+ xsub for xsub in xss] + xss
+
+def is_inc(xs):
+    for i in range(1, len(xs)):
+        if xs[i-1] > xs[i]:
+            return False
+    return True
+
+def brute_longest_subsequence(A):
+    subs_seq = subs(A)
+    lens = map(lambda x: len(x) , filter(is_inc, subs_seq))
+    return max(lens)
+
+def rec_longest_increasing_seq(A, prev, curr):
+    if curr == len(A):
+        return 0
+    else:
+        c1 = 0
+        if A[prev] < A[curr] or prev == -1:
+            c1 = 1 + rec_longest_increasing_seq(A, curr, curr+1)
+        c2 = rec_longest_increasing_seq(A, prev, curr+1)
+        return max(c1, c2)
+def dp_lis(A):
+    dp = [1 for _ in range(len(A))]
+    max_len = 0 
+    for curr in range(1, len(A)):
+        for prev in range(curr):
+            if A[prev] < A[curr] and dp[prev] >= dp[curr]:
+                dp[curr] = dp[prev] + 1
+                max_len = max(max_len, dp[curr])
+    return max_len
 
 
-import collections
-Point = collections.namedtuple('Point', field_names=['x', 'y'])
-# mutation is not possile
+print(brute_longest_subsequence([-4, 10, 3, 7, 15]))
+print(rec_longest_increasing_seq([-4, 10, 3, 7, 15], -1, 0))
+print(dp_lis([-4, 10, 3, 7, 15] ))
 
-def smaller_than(A, target):
-    l, r = 0, len(A)-1
+def substrings(A):
+    subs =[]
+    for i in range(len(A)+1):
+        for j in range(i+1, len(A)+1):
+            subs.append(A[i:j])
+    return subs
 
-    while l < r:
-        mid = (l + r) // 2
+print(substrings("abc"))
 
-        if A[mid] >= target:
-            r = mid
-        else: # A[mid] > target
-            l =  mid+1
-    return l
-
-print(smaller_than([1, 2, 4, 7, 9], 3)) # 1
-print(smaller_than([1, 2, 4, 7, 9], 8)) # 3
 
 """
-convinced
-convinced
+with happy as (
+    select cutomer_id,
+    LAG(rantal_ts, 9) over (partition by customer_id order by rental_ts) as prev, 
+    ROW_NUMBER() over (parition by cusomer_id oder by rental_ts)
+from 
+    rentals
+    )
+select extract(days rental_ts - prev), customer_id
+from happy 
+where row_number = 10
+
+collaboration 
+expedited  
+
+
 """
