@@ -1,162 +1,115 @@
 """
-list all paths in a binary tree
-[
-    [8,6,5]
-    [8,6,3]
-    [8,5,10]
-]
+we can start from water cell and find all the lands then take a maximum of it
+that would involve calling the bfs algorithm often
 
-if node.left is none if node.right is not # to avoid dulicates
-- using an accumulator
-- using a clean recursion
+instead what we can do is, start from all the lands possible 
+then from each land calculate the water distance, 
+when we reach a land, we take that as the nearrest land
+this way we dont have to share a visited land set
 """
 
-class Node:
-    def __init__(self, value):
-        self.val = value
-        self.right = None
-        self.left = None
-    def __repr__(self):
-        return f'Node(val={self.val}, right={self.left}, right={self.right})'
+def manhattan_distance(x1, y1, x2, y2):
+    return abs(x1-x2) + abs(y1-y2)
 
-# import collections 
-# Node = collections.namedtuple('Node', field_names=['val','left', 'right']
+def neighbours(r, c, rlen, clen):
+    nghs = [(r, c-1), (r-1, c), (r, c+1), (r+1, c)]
+    valid = []
+    for (nr, nc) in range(nghs):
+        if 0 <= nr <= rlen and 0 <= nc <= clen:
+            valid.append((nr, nc))
+    return valid
 
-def path_rec(subtree, all_paths, curr_path):   
-    if subtree is None:
-        return all_paths # incomplete path ? becaue we are not reaching none
-    elif subtree.left is None and subtree.right is None:
-        return all_paths + [curr_path + [subtree.val]]
-    else:
-        left = path_rec(subtree.left, all_paths, curr_path + [subtree.val])
-        right = path_rec(subtree.right, all_paths, curr_path + [subtree.val])
-        return left + right
+def bfs(grid, rlen, clen, lands): # calculate nearest land for each water body
+    q = [lands] # list((r, c),(lc, lr)) # current cell, nearest land
+    visited = set()
+    distances = [[99999 for _ in range(len(grid[0]))] for _ in range(len(grid))]
+    # will be using manahattan distance
 
-def path_non_tail(subtree):   
-    if subtree is None:
-        return [[]] # incomplete path ? becaue we are not reaching none
-    elif subtree.left is None and subtree.right is None:
-        return [[subtree.val]]
-    else: # in this case there will have to be a if left check 
-        left = [[subtree.val] + xss for xss in path_non_tail(subtree.left)]
-        right = [[subtree.val] + xss for xss in path_non_tail(subtree.right)]
-        return left + right 
-
-root = Node(8)
-n6 = Node(6)
-n5 = Node(5)
-n3 = Node(3)
-n15  = Node(15)
-n10 = Node(10)
-
-root.left = n6
-root.right = n15
-
-n6.left = n5
-n6.right = n3
-
-n15.right = n10
-print(path_rec(root, [], []))
-# print(path_non_tail(root))
-
-"""
-lesson, we can collected the entire path only the the end of the path,
-and using tail collection works best  when we have to get all paths
-
-"""
+    while q:
+        (r, c), (lr, lc) = q.pop()
+        distances[r][c] = manhattan_distance(r,c, lr, lc)
+        for (nr, nc) in neighbours(r, c, rlen, clen):
+            if (nr, nc) not in visited and grid[nr][nc] == 1: # land
+                q.append((nr, nc), (nr, nc)) # that becomes the nearest land
+                visited.add(nr, nc)
+            elif (nr, nc) not in visited: # we have the use the availabe land f
+                q.append((nr, nc), (lr, lc))
+                visited.append((nr, nc))
+    return distances # this needs to be iterated and a maximum needs to be returned
 
 
 """
-longest increasing subseuence
-1. Brute force
-    - generate all subsequeces
-    - filter the only one that are incresing
-    - get he larget one by size
-    (n^2 sol) not any better any thing else but constants are hight
-    but very inefficint if the the data is dynamic(insert and delete), in that case somehing like 
-    segement trees would be more benificial
-    using balanced binary tree
+connected components
+this has to share a visited state as we want to make sure we are going to the same cell again
+actually is a problem with the driver code that is calling the bfs method that is going to have the problem 
 
-2. Recurion
-    - at every element, there are two options 
-        - it is part of existing longest increasing sequence, if it is > prev
-        - else, a new lis can be start from there
-    - there are some problems that will be recomputed often becaue of the recursion tree, 
-    2^n solution  [exponential]
-     (how to draw a recursion tree on the pad )
-3. we can use memoization, to cache the results that are being recomputed often
-    n^2 [quadratic]
-4. we can use dp, where we with elm1, and go start from 0 to i, and count if elm are higher
-    - avoids stackoverflow
-    n^2, 
+
+def bfs(graph, node):
+    q = [node]
+    component = []
+    visited = set()
+    while q:
+        n = q.pop(0)
+        for neighbour in graph[node]:
+            visited.append(component)
+            component.append(n)
+    return component
+
+all_node = []
+visited = set()
+componentes = []
+for  node in all_nodes:
+    if node not in visited:
+        component = bfs(graph, node)
+        [visited.add(x) x for x in ragne(component)]
+        components.append(component) 
+return compnent
 """
 
-def subs(A):
-    if len(A) == 0:
-        return [[]]
-    x, xs = A[0], A[1:]
-    xss = subs(xs)
-    return [[x]+ xsub for xsub in xss] + xss
+"""
+number of edits needed to transform from one string to another 
+this was also asked in apple interview, where the question was slighlty related, 
+where it a single typo could have been tolerated, that can be reduced down if the string insert and delete op was one to make it same
 
-def is_inc(xs):
-    for i in range(1, len(xs)):
-        if xs[i-1] > xs[i]:
-            return False
-    return True
+# TODO check out the apple question once more, revisiting using suffix and prefix
+# TODO make this question clear, will need an example it is hard to think 
+this can be done via dynamic programing, 
+there is brute ?  what is that 
 
-def brute_longest_subsequence(A):
-    subs_seq = subs(A)
-    lens = map(lambda x: len(x) , filter(is_inc, subs_seq))
-    return max(lens)
+next recursion 
+memoization as there are repeated subproblems 
+because of that we can also use dynamic problem
 
-def rec_longest_increasing_seq(A, prev, curr):
-    if curr == len(A):
+there are thee options 
+if i == len(s1):
+    return len(s2)
+if j == len(s2)
+    return len(s1)
+if the chars i == j -> edits(s1, s2, i+1, j+1)
+
+c2 = edits(s1, s2, i+1, j) # delete 
+c3 = edits(s1, s2, i, j+1) # insert 
+return max(c1, c2, c3)
+
+lcs =  find the lenght of the common substring
+then (len(s1)-lcs - insert
+(len(s2))-lcs - insert
+
+return ()
+"""
+
+def lcs(s1, s2, i, j):
+    if i == len(s1) or j == len(s2):
         return 0
     else:
-        c1 = 0
-        if A[prev] < A[curr] or prev == -1:
-            c1 = 1 + rec_longest_increasing_seq(A, curr, curr+1)
-        c2 = rec_longest_increasing_seq(A, prev, curr+1)
-        return max(c1, c2)
-def dp_lis(A):
-    dp = [1 for _ in range(len(A))]
-    max_len = 0 
-    for curr in range(1, len(A)):
-        for prev in range(curr):
-            if A[prev] < A[curr] and dp[prev] >= dp[curr]:
-                dp[curr] = dp[prev] + 1
-                max_len = max(max_len, dp[curr])
-    return max_len
+        c1 = 0 
+        if s1[i] == s2[j]:
+            c1 = 1 + lcs(s1, s2, i+1, j+1)
+        c2 = lcs(s1, s2, i, j+1)
+        c3 = lcs(s1, s2, i+1, j)
+        return max(c1, c2, c3)
+# 3^n
+print(lcs("abcde", "ace", 0, 0))
 
-
-print(brute_longest_subsequence([-4, 10, 3, 7, 15]))
-print(rec_longest_increasing_seq([-4, 10, 3, 7, 15], -1, 0))
-print(dp_lis([-4, 10, 3, 7, 15] ))
-
-def substrings(A):
-    subs =[]
-    for i in range(len(A)+1):
-        for j in range(i+1, len(A)+1):
-            subs.append(A[i:j])
-    return subs
-
-print(substrings("abc"))
-
-
-"""
-with happy as (
-    select cutomer_id,
-    LAG(rantal_ts, 9) over (partition by customer_id order by rental_ts) as prev, 
-    ROW_NUMBER() over (parition by cusomer_id oder by rental_ts)
-from 
-    rentals
-    )
-select extract(days rental_ts - prev), customer_id
-from happy 
-where row_number = 10
-
-collaboration 
-expedited  
-
-
-"""
+consequences 
+convinced 
