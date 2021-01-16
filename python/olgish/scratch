@@ -1,115 +1,74 @@
 """
-we can start from water cell and find all the lands then take a maximum of it
-that would involve calling the bfs algorithm often
-
-instead what we can do is, start from all the lands possible 
-then from each land calculate the water distance, 
-when we reach a land, we take that as the nearrest land
-this way we dont have to share a visited land set
+closed left right open
+- very usefull when we have to find the first largest element than given targer 
+- 
 """
+def bst_first_largest(arr, target):
+   l , h = 0, len(arr)-1
 
-def manhattan_distance(x1, y1, x2, y2):
-    return abs(x1-x2) + abs(y1-y2)
+   while l < h:
+       mid = (l + h)  // 2
+       if arr[mid] >= target:
+           h = mid
+       else:
+            l = mid + 1
+   return l
 
-def neighbours(r, c, rlen, clen):
-    nghs = [(r, c-1), (r-1, c), (r, c+1), (r+1, c)]
-    valid = []
-    for (nr, nc) in range(nghs):
-        if 0 <= nr <= rlen and 0 <= nc <= clen:
-            valid.append((nr, nc))
-    return valid
+print(bst_first_largest([1,2,5,6,8],3)) 
+# will have to insert into the the positon returned and shift the element that is there at i to i+1
+# which will lead to n^2 complexity 
+# it is good idea when the data structure is realtively static, example find 
+# if the tree is skewed we will have a issue here too
 
-def bfs(grid, rlen, clen, lands): # calculate nearest land for each water body
-    q = [lands] # list((r, c),(lc, lr)) # current cell, nearest land
-    visited = set()
-    distances = [[99999 for _ in range(len(grid[0]))] for _ in range(len(grid))]
-    # will be using manahattan distance
-
-    while q:
-        (r, c), (lr, lc) = q.pop()
-        distances[r][c] = manhattan_distance(r,c, lr, lc)
-        for (nr, nc) in neighbours(r, c, rlen, clen):
-            if (nr, nc) not in visited and grid[nr][nc] == 1: # land
-                q.append((nr, nc), (nr, nc)) # that becomes the nearest land
-                visited.add(nr, nc)
-            elif (nr, nc) not in visited: # we have the use the availabe land f
-                q.append((nr, nc), (lr, lc))
-                visited.append((nr, nc))
-    return distances # this needs to be iterated and a maximum needs to be returned
-
-
+# largest incresing subsequecne
 """
-connected components
-this has to share a visited state as we want to make sure we are going to the same cell again
-actually is a problem with the driver code that is calling the bfs method that is going to have the problem 
-
-
-def bfs(graph, node):
-    q = [node]
-    component = []
-    visited = set()
-    while q:
-        n = q.pop(0)
-        for neighbour in graph[node]:
-            visited.append(component)
-            component.append(n)
-    return component
-
-all_node = []
-visited = set()
-componentes = []
-for  node in all_nodes:
-    if node not in visited:
-        component = bfs(graph, node)
-        [visited.add(x) x for x in ragne(component)]
-        components.append(component) 
-return compnent
+brute force solution
+    generate all the subsequences, 
+    filter the increasing subs
+    give the max(sum(filtered))
+    
+resursive solution 
+    at every element there are two possiblilities
+        will add to the exiting seq
+        or will start its own sequence 
+        
+    def lis(arr, prev, curr):
+        if curr == len(arr):
+            return 0
+        else:
+            c1 = 0 
+            if arr[prev] < arr[curr] or prev = -1:
+                c1 = lis(arr, curr, curr+1)
+            c2 = lis(arr, prev, curr+1) # skipping the current element
+            return max(c1, c2)
+memo
+dp
 """
-
-"""
-number of edits needed to transform from one string to another 
-this was also asked in apple interview, where the question was slighlty related, 
-where it a single typo could have been tolerated, that can be reduced down if the string insert and delete op was one to make it same
-
-# TODO check out the apple question once more, revisiting using suffix and prefix
-# TODO make this question clear, will need an example it is hard to think 
-this can be done via dynamic programing, 
-there is brute ?  what is that 
-
-next recursion 
-memoization as there are repeated subproblems 
-because of that we can also use dynamic problem
-
-there are thee options 
-if i == len(s1):
-    return len(s2)
-if j == len(s2)
-    return len(s1)
-if the chars i == j -> edits(s1, s2, i+1, j+1)
-
-c2 = edits(s1, s2, i+1, j) # delete 
-c3 = edits(s1, s2, i, j+1) # insert 
-return max(c1, c2, c3)
-
-lcs =  find the lenght of the common substring
-then (len(s1)-lcs - insert
-(len(s2))-lcs - insert
-
-return ()
-"""
-
-def lcs(s1, s2, i, j):
-    if i == len(s1) or j == len(s2):
+def lis(arr, prev, curr):
+    if curr == len(arr):
         return 0
     else:
         c1 = 0 
-        if s1[i] == s2[j]:
-            c1 = 1 + lcs(s1, s2, i+1, j+1)
-        c2 = lcs(s1, s2, i, j+1)
-        c3 = lcs(s1, s2, i+1, j)
-        return max(c1, c2, c3)
-# 3^n
-print(lcs("abcde", "ace", 0, 0))
+        if arr[prev] < arr[curr] or prev == -1:
+            c1 = arr[curr] + lis(arr, curr, curr+1)
+        c2 = lis(arr, prev, curr+1) # skipping the current element
+        return max(c1, c2)
+print(lis([2, 5, 1, 6 , 9], -1, 0))
 
-consequences 
-convinced 
+def lis_dp(arr):
+    dp = [0 for _ in range(len(arr))]
+    dp[0] = arr[0]
+    max_sum = 0 
+    for curr in range(1, len(arr)):
+        dp[curr] = arr[curr]
+        for prev in range(curr):
+            if arr[curr] > arr[prev] and dp[curr] <= arr[curr] + dp[prev]:
+                dp[curr] = dp[prev] + arr[curr]  
+                max_sum = max(max_sum, dp[curr])
+    return max_sum
+print(lis_dp([2, 5, 1, 6 , 9]))
+
+"""
+trepidation 
+virtousity B
+"""
