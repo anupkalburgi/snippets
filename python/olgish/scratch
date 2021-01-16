@@ -1,74 +1,86 @@
+"""[summary]
+1NF - Make sure the fields are atomic 
+2NF - dependency needs to  be moved out a differnt table, the values must depend on the full primary key, rather than just a part of it 
+3NF - has to do with transitive dependencies 
+    should not have repeated lines
 """
-closed left right open
-- very usefull when we have to find the first largest element than given targer 
-- 
-"""
-def bst_first_largest(arr, target):
-   l , h = 0, len(arr)-1
 
-   while l < h:
-       mid = (l + h)  // 2
-       if arr[mid] >= target:
-           h = mid
-       else:
-            l = mid + 1
-   return l
+# longest increasing sum subsequence
+""""[summary]"
 
-print(bst_first_largest([1,2,5,6,8],3)) 
-# will have to insert into the the positon returned and shift the element that is there at i to i+1
-# which will lead to n^2 complexity 
-# it is good idea when the data structure is realtively static, example find 
-# if the tree is skewed we will have a issue here too
+burte force 
+    generate all the subsequences
+    filter the increasing onces
+    get the maximim one
 
-# largest incresing subsequecne
+recursion
+    if prev < curr:
+        lis(arr, curr, curr+1)
+    lis(prev, curr+1)
+
+next is memoization
+next is dp
+
 """
-brute force solution
-    generate all the subsequences, 
-    filter the increasing subs
-    give the max(sum(filtered))
-    
-resursive solution 
-    at every element there are two possiblilities
-        will add to the exiting seq
-        or will start its own sequence 
-        
-    def lis(arr, prev, curr):
-        if curr == len(arr):
-            return 0
-        else:
-            c1 = 0 
-            if arr[prev] < arr[curr] or prev = -1:
-                c1 = lis(arr, curr, curr+1)
-            c2 = lis(arr, prev, curr+1) # skipping the current element
-            return max(c1, c2)
-memo
-dp
-"""
-def lis(arr, prev, curr):
+def subsequences(arr):
+    if len(arr) == 0:
+        return [[]]
+    else:
+        x, xs = arr[0], arr[1:]
+        subs = subsequences(xs)
+        return [[x]+ xxs for xxs in subs] + subs
+def filter_inc(sub):
+    for i in range(1, len(sub)):
+        if sub[i-1] > sub[i]:
+            return False
+    return True
+
+def lis(arr):
+    subs = list(subsequences(arr))
+    subss = list(map(sum, filter(filter_inc, subs)))
+    return max(subss)
+## update the brute force solution 
+def lis_rec(arr, prev, curr):
     if curr == len(arr):
         return 0
     else:
-        c1 = 0 
+        c1 =0
         if arr[prev] < arr[curr] or prev == -1:
-            c1 = arr[curr] + lis(arr, curr, curr+1)
-        c2 = lis(arr, prev, curr+1) # skipping the current element
+            return arr[curr] + lis_rec(arr, curr, curr+1)
+        c2 = lis_rec(arr, prev, curr+1)
         return max(c1, c2)
-print(lis([2, 5, 1, 6 , 9], -1, 0))
 
 def lis_dp(arr):
     dp = [0 for _ in range(len(arr))]
+    max_sum = 0
     dp[0] = arr[0]
-    max_sum = 0 
     for curr in range(1, len(arr)):
         dp[curr] = arr[curr]
         for prev in range(curr):
             if arr[curr] > arr[prev] and dp[curr] <= arr[curr] + dp[prev]:
-                dp[curr] = dp[prev] + arr[curr]  
-                max_sum = max(max_sum, dp[curr])
+                dp[curr] = dp[prev] + arr[curr]
+                max_sum = max(dp[curr], max_sum)
     return max_sum
-print(lis_dp([2, 5, 1, 6 , 9]))
 
-"""
-trepidation 
-virtousity B
-"""
+
+
+print(lis([4, 1, 2, 6, 10, 1, 12]))
+print(lis_rec([4, 1, 2, 6, 10, 1, 12], -1, 0))
+print(lis_dp([4, 1, 2, 6, 10, 1, 12]))
+
+
+
+def bfs(arr, target ,left , right):
+    if left > right:
+        return -1
+    else:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] > target:
+            return bfs(arr, target, left, mid)
+        else:
+            return bfs(arr, target, mid+1, right)
+
+
+print(bfs([1,3,4,6,9,19], 6, 0, 5))
