@@ -10,12 +10,12 @@ def subsets(arr):
     this is also the subsequence, and there are 2^n number of these
     """
 
-print(len(subsets("a")))
-print(len(subsets("ab")))
-print(len(subsets("abc")))
-print(len(subsets("abcd")))
-print(len(subsets("abcde")))
-print(len(subsets("abcdef")))
+# print(len(subsets("a")))
+# print(len(subsets("ab")))
+# print(len(subsets("abc")))
+# print(len(subsets("abcd")))
+# print(len(subsets("abcde")))
+# print(len(subsets("abcdef")))
 
 class Node:
     def __init__(self, value):
@@ -53,84 +53,30 @@ n1 = Node(1)
 root.left = n3
 n3.left = n1
 
-print(nearest_node(root, 2.1))
+# print(nearest_node(root, 2.1))
 print("-----------------")
 def lcs(s1, s2, i, j, cmn):
     if len(s1) == i or len(s2) == j:
         return cmn
     else:
-        c1 = cmn
         if s1[i] == s2[j]:
-            c1 = lcs(s1, s2, i+1, j+1, cmn+1)
+            cmn = lcs(s1, s2, i+1, j+1, cmn+1)
         c2 = lcs(s1, s2, i+1, j , 0)
         c3 = lcs(s1, s2, i, j+1, 0)
-        return max(c1, c2, c3)
-# def lcs(s1, s2, id1, id2, size):
-#     """
-#     complexity: 3^(m+n)
-#     """
-#     if id1 == len(s1) or id2 == len(s2):
-#         return size
-#     # c1 = size
-#     if s1[id1] == s2[id2]:
-#         return lcs(s1, s2, id1+1, id2+1, size+1)
-#     c2 = lcs(s1, s2, id1+1, id2, 0)
-#     c3 = lcs(s1 , s2, id1, id2+1, 0)
-    
-#     return max(size, c2, c3)
+        return max(cmn, c2, c3)
 
 def lcs_dp(s1, s2):
     dp = [[0 for _ in range(len(s2)+1)] for _ in range(len(s1)+1)]
     max_len = 0
 
-    for i in range(1, len(s1)):
-        for j in range(1, len(s2)):
-            if s1[i+1] == s2[j+1]:
+    for i in range(1, len(s1)+1):
+        for j in range(1, len(s2)+1):
+            if s1[i-1] == s2[j-1]:
                 dp[i][j] = dp[i-1][j-1] + 1
-            else:
-                dp[i][j] = 0
-            max_len = max(max_len, dp[i][j])
-    print(dp)
-    return dp[-1][-1]
+                max_len = max(max_len, dp[i][j])
+    return max_len
 
 print(lcs("abc", "adbfc", 0, 0, 0)) # 3
-print("passport", "ppsspt", "expect 3 ->" , lcs("passport", "ppsspt", 0 ,0, 0  ))
 print(lcs_dp("abc", "adbfc"))
+print("passport", "ppsspt", "expect 3 ->" , lcs("passport", "ppsspt", 0 ,0, 0  ))
 print(lcs_dp("passport", "ppsspt"))
-
-
-# def merge(left, right):
-#     if len(left) == 0:
-#         return right
-#     if len(right) == 0:
-#         return left
-#     else:
-#         lh ,lt  = left[0], left[1:]
-#         rh, rt = right[0], right[1:]
-#         if lh < rh:
-#             return [lh] + merge(lt, right)
-#         else:
-#             return [rh] + merge(left, rt)
-
-# def merge_sort(arr):
-#     if len(arr) <= 1:
-#         return arr
-#     else:
-#         mid = len(arr) // 2
-#         left = merge_sort(arr[:mid])
-#         right = merge_sort(arr[mid:])
-#         return merge(left, right)
-
-# print(merge_sort([3, 8, 1, 2, 3]))
-
-
-"""[summary]
-all_inventory
-all_rental_may
-
-all_inventory ai
-left outer join may_rental mr
-on mr.inventory_id = ai.inventory_id 
-
-
-"""
