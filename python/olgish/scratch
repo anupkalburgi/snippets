@@ -1,196 +1,30 @@
 """
-rottne oranges
-how long does it take to rot an orange 
+0
 
-we need to report back the time taken to rott all the oranges 
+lexical ordering
+can be done by converting the integers to string, 
+and then sorting the string should give a lexical order 
+that the time is going to be dominated by the sorting algo
 
-1st collect all the orages are currently rotten, 
-2nd next step the neighbours get rottne and so on
-"""
-def neighbors(r, c, rlen, clen):
-    nghs = [(r, c-1), (r-1,c), (r, c+1), (r+1, c) ]
-    valid = []
-    for (nr, nc) in range(nghs):
-        if 0 <= nr < rlen and 0 <= nc <= clen:
-            valid.append((nr, nc))
-    return valid
-def bfs(grid, rotten):
-    """
-    will return back an int
-    """ 
+now we can take that to a linear time, by using dfs
+if we observe, for every number we are going from 0 to 9 adding one one to it=
 
-    number_of_steps = 0
-    rlen = len(grid)
-    clen = len(grid[0])
-    while rotten:
-
-        number_of_steps = number_of_steps + 1
-        qsize = len(rotten)
-        for _ in range(qsize):
-            (r,c) = rotten.pop(0)
-            for (nr, nc) in neighbors(r, c, rlen, clen):
-                if gird[nr][nc] != 2:
-                    grid[nr][nc] = 2 # mark it rotten
-    return (number_of_steps, grid) # returning grid if we have to check if there are any fresh one left
-
-def num_steps(grid):
-    rotten = []
-    for r in len(grid):
-        for c in len(grid[0]):
-            if grid[r][c] == 2:
-                rotten.append((r, c))
-    
-    steps, grid = bfs(grid, rotten)
-
-"""[summary]
-lixical ordering, 
-there are two way we can go about this, one is the brute force way and the other is dfs 
-with brute force we are getting a complexity of O(nlogn) dominated by the sorting algorithm
-
-next using DFS we can being this down to linear time with DFS, as ther are no comparisions 
-and repeated checks
+we can do that using a dfs algorithm
 
 """
-
 def lexical_order(n):
     result = []
-    
-    def dfs(curr):
+    def dfs(curr, n):
         if curr > n:
             return 
         else:
             result.append(curr)
-            for j in range(0, 10):
-                if curr * 10 + j > n:
-                    return 
-                dfs(curr*10+j)
- 
-    for i in range(1, 10):
-        dfs(i)
-
+            for j in range(1, 10):
+                if curr*10 + j > n:
+                    return
+                dfs(curr*10+j, n)
+    for i in range(1, n):
+        dfs(i, n)
     return result
 
-print(lexical_order(21))
-
-"""[summary]
-find the nearest land,  then the maximum distance among them
-star from all possible lands,
-using augmented bfs i.e instead of storing just he water co-ordinated or the neighbors to explore 
-also carry along what is the nearest land
-when we hit a land, we continue but also store that as the nearest land
-this is not a issue as we are starting the exploration from all the possible lands at the same time 
-we also need to share the visited array  as we are often corrsing over
-
-"""
-
-def bfs_lands(grid, lands):
-    visited = set()
-    # lands = [(r, c), (lr, lc)] current cell and nearest land here it will be lc = c anc lr = r 
-    # we are doing manhattan distance
-    distance = [[0 for _ in range(len(grid))] for _ in range(len[grid[0]])]
-
-    while lands:
-        (r, c), (lr, lc) = lands.pop(0)
-        if grid[r][c] == "W":
-            distance[r][c] = manhatten_distance(r, c, lr, lc)
-        else: # it is land, so nearest land is at distance 0
-            distance[r][c] == 0
-        for (nr, nc) in neighbors(r, c, rlen, clen):
-            if (nr, nc) not in visited and grid[nr][nc] == "L":
-                lands.append((nr, nc), (nr, nc))
-            else:
-                lands.append((nr, nc), (lr, lc))
-    return distance # we will have to pick up the max from this grid
-
-"""
-count the number of elements that are smaller than the current element
-I think the merge sort solution to is nicer
-    as the performance is predictable for any kind of input 
-there is also a binary search method, that might have bad performance 
-    we creat a new array, we start from the right end of the array 
-        as there is no element that is greater than that we have 0
-        then for for n-1, we have insert, we can use binary search to find the index, and then shift the elments 
-        or use slicing, for which I dont really know the complexity
-in merge sort we count the number of time the elements has to move over form the right to the left, and  that is the answer
-we 
-"""
-
-class Num:
-    def __init__(self, num, oidx):
-        self.num = num
-        self.oidx = oidx 
-    def __repr__(self) -> str:
-        return f"Num(num={self.num}, oidx={self.oidx}"
-    
-def merge(left, right):
-    if len(left) == 0:
-        return right
-    if len(right) == 0:
-        return left
-    else:
-        lh, lt = left[0], left[1:]
-        rh, rt = right[0], right[1:]
-        if lh.num < rh.num:
-            return [lh] + merge(lt, right)
-        else:
-            for l in left:
-                l.count = l.count+1
-            return [rh] + merge(left, rt)
-
-# the size is important as we need to resrt the count when it does not work out
-def length_of_common_string(str1, str2, i, j, size):
-    if i == len(str1) or j == len(str2):
-        return size
-    else:
-        if str1[i] == str2[j]:
-            size = length_of_common_string(str1, str2, i+1, j+1 , size+1)
-        c1 = length_of_common_string(str1, str2, i+1, j, 0)
-        c2 = length_of_common_string(str1, str2, i , j+1, 0)
-        return max(size, c1, c2)
-
-def lcs_dp(str1, str2):
-    dp = [[0 for _ in range(len(str2)+1)] for _ in range(len(str1)+1)]
-    max_len = 0
-    for i in range(1, len(str1)+1):
-        for j in range(1, len(str2)+1):
-            if str1[i-1] == str2[j-1]:
-                dp[i][j] = dp[i-1][j-1] + 1
-                max_len = max(max_len, dp[i][j])
-    return max_len
-
-print(length_of_common_string("abcde", "cde", 0, 0, 0))        
-print(lcs_dp("abcde", "cde"))
-
-class Trie:
-    def __init__(self):
-        self.trie = {}
-    
-    def insert(self, word):
-        trie = self.trie
-        for c in word:
-            if c not in trie:
-                trie[c] = {}
-            trie = trie[c]
-    def search(self, word):
-        trie = self.trie 
-        for c in word:
-            if c not in trie:
-                return None
-            trie = trie[c]
-        return trie
-t = Trie()
-t.insert("random")
-t.insert("range")
-t.insert("notrange")
-t.insert("nut")
-print(t.search("ran"))
-print(t.search("ra"))
-
-
-
-"""
-select email
-from emails 
-group by email 
-having count(email) > 2
-"""
+print(lexical_order(32))
