@@ -1,30 +1,88 @@
 """
-0
-
-lexical ordering
-can be done by converting the integers to string, 
-and then sorting the string should give a lexical order 
-that the time is going to be dominated by the sorting algo
-
-now we can take that to a linear time, by using dfs
-if we observe, for every number we are going from 0 to 9 adding one one to it=
-
-we can do that using a dfs algorithm
+start from 1, 
+- but this we will have to call bfs method very often, and that can be inefficient
+    -   in that case we can start we can start from all the possible 0s, but that depends on the nature of the poblem 
+        - but starting with 0 always would be a better solution, as we have predictable performance
 
 """
-def lexical_order(n):
+
+def bfs(grid, r ,c  ):
+    q = [(r, c)] # starting from land
+    # we will be starting from 1
+    distance = 0
+    min_distance = 99999999
+    while q:
+        qsize = len(q) # as we move away the distance has to increase
+        distance = distance  + 1
+        visited = set()
+        for _ in range(qsize):
+            (nr, nc) = q.pop(0)
+            for (nnr, nnr) in neighbors(nr, nc, rlen, clen):
+                if (nnr, nnc) not in visited and grid[nnr][nnc] == 0:
+                    min_distance = min(min_distance, distance)
+                    visited.add(nnr, nnc)
+                    break #should be good as are using bfs
+                elif (nnr, nnc) not in visited and grid[nnr][nnc] == 1: # we will add it to the q and move on to find if there is water 
+                    q.append((nnr, nnc))
+                    visited((nnr, nnc))
+
+    return min_distance # 
+
+def array_product(arr):
+    l = [1 for _ in arr]
+    r = [1 for _ in arr]
+
+    for i in range(1, len(arr)):
+        l[i] = l[i-1] * arr[i-1]
+    
+    for j in range(len(arr)-2, -1, -1):
+        r[j] = r[j+1] * arr[j+1]
+    
     result = []
-    def dfs(curr, n):
-        if curr > n:
-            return 
-        else:
-            result.append(curr)
-            for j in range(1, 10):
-                if curr*10 + j > n:
-                    return
-                dfs(curr*10+j, n)
-    for i in range(1, n):
-        dfs(i, n)
+    for i in range(len(arr)):
+        result.append(l[i]*r[i])
+    
     return result
 
-print(lexical_order(32))
+print(array_product([5, 1, 4, 2]))
+
+
+def lcss(str1, str2 , i, j):
+    if i == len(str1) or j == len(str2):
+        return 0
+    else:
+        c1 = 0
+        if str1[i] == str2[j]:
+            c1 = 1 + lcss(str1, str2, i+1, j+1)
+        c2 = lcss(str1, str2, i, j+1)
+        c3 = lcss(str1, str2, i+1, j)
+        return max(c1, c2, c3)
+
+print(lcss("abdec", "abc", 0, 0)) # expecting 3 abc
+
+def lcss_dp(str1, str2):
+    dp = [[0 for _ in range(len(str2)+1)] for _ in range(len(str1)+1)]
+    max_len = 0
+    for i in range(1, len(str1)+1):
+        for j in range(1, len(str2)+1):
+            if str1[i-1] == str2[j-1]:
+                dp[i][j] = 1 + dp[i-1][j-1]
+            else:
+                dp[i][j] = max(dp[i][j-1], dp[i-1][j])
+            max_len = max(max_len, dp[i][j])
+    return max_len
+
+print(lcss_dp("abdec", "abc")) # expecting 3 abc
+
+
+def root(n):
+    if n < 2:
+        return n
+    else:
+        left = 2 * root(n // 4)
+        right = left + 1
+        return left if right * right > n else right
+    
+print(root(8))
+import collections
+collections.namedtuple()

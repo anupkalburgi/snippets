@@ -1,0 +1,67 @@
+Onsite Interviews
+Jonny DS 12  -> 40
+platform - 
+    infra 
+science 
+    analytics
+last 10 min 
+    
+
+CREATE TABLE test (
+  id INT
+);
+
+INSERT INTO test (id) VALUES (1);
+INSERT INTO test (id) VALUES (2);
+
+SELECT * FROM test;
+
+any no tags
+we need 
+
+
+FL1 - FB, 19th 
+FL1 - OranicSeaerch, 2f0th  
+
+loan_files 
+  FileName, TagId, TaggedOn, TagggedOf(null)
+
+tags
+  tag_name , desc
+
+given_file = "tmp"
+
+1. 
+-- all the tags that are active currently
+select FileName
+from loan_files
+where FileName = given_file and TagggedOf is null
+
+2. 
+-- # all the tags eve
+select FileName
+from loan_files
+where FileName = given_file
+
+
+3. 
+select count(*)
+from loan_files
+where tagId = x and TaggedOn > y 
+
+--  get all the file with tag x, 
+--  count(*) where taggedOf is not null 
+
+with as all_tags (
+  select FileName, taggedOf
+  from loan_files
+  where tagId = x 
+
+)
+
+select count(*)
+from all_tags
+where tageedOf is not null
+
+
+
