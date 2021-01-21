@@ -1,88 +1,99 @@
-"""
-start from 1, 
-- but this we will have to call bfs method very often, and that can be inefficient
-    -   in that case we can start we can start from all the possible 0s, but that depends on the nature of the poblem 
-        - but starting with 0 always would be a better solution, as we have predictable performance
 
 """
+convinced
+intrepid
+appreciate
+appropriate
+"""
 
-def bfs(grid, r ,c  ):
-    q = [(r, c)] # starting from land
-    # we will be starting from 1
-    distance = 0
-    min_distance = 99999999
-    while q:
-        qsize = len(q) # as we move away the distance has to increase
-        distance = distance  + 1
-        visited = set()
-        for _ in range(qsize):
-            (nr, nc) = q.pop(0)
-            for (nnr, nnr) in neighbors(nr, nc, rlen, clen):
-                if (nnr, nnc) not in visited and grid[nnr][nnc] == 0:
-                    min_distance = min(min_distance, distance)
-                    visited.add(nnr, nnc)
-                    break #should be good as are using bfs
-                elif (nnr, nnc) not in visited and grid[nnr][nnc] == 1: # we will add it to the q and move on to find if there is water 
-                    q.append((nnr, nnc))
-                    visited((nnr, nnc))
+def sqrt(x):
+    if x < 2:
+        return x
+    else:
+        left = 2 * sqrt(x // 4)
+        right = left + 1
+        return left if right * right > x else right
 
-    return min_distance # 
+"""
+the other way of doing this would be to use binary search
+we know that the sqrt of n is between 1 and n, so if we take mid, and (mid+1)*(mid+1) > n then search to mid else search from from mid+1 to n 
+"""
+print(sqrt(9))
 
-def array_product(arr):
-    l = [1 for _ in arr]
-    r = [1 for _ in arr]
+def xor(n):
+    res = 0
 
-    for i in range(1, len(arr)):
-        l[i] = l[i-1] * arr[i-1]
-    
-    for j in range(len(arr)-2, -1, -1):
-        r[j] = r[j+1] * arr[j+1]
-    
-    result = []
-    for i in range(len(arr)):
-        result.append(l[i]*r[i])
-    
-    return result
+    for i in range(1, n):
+        res = res ^ i
 
-print(array_product([5, 1, 4, 2]))
+    return res
 
 
-def lcss(str1, str2 , i, j):
-    if i == len(str1) or j == len(str2):
+max_diameter = 0
+def diameter_binary(root):
+    if root is None:
+        return 0
+    else:
+        l = 1 + diameter_binary(root.left)
+        r = 1 + diameter_binary(root.right)
+        max_diameter = max(l, r , max_diameter)
+        return max(l, r)
+
+print(xor(100))
+print("#"*80)
+
+# TODO: streetsidesoftware Spell Checker
+"""
+longest increasing sequence of numbers given a list of numbers
+1. Brute
+    - Generate all possible sub sequences
+    - filter the increasing ones
+    - get the one with maximum size
+    n^2 with hight constants
+2. recursive
+    c1 = if curr > prev => 1 + lis(curr, curr+1)
+    c2 = lis(prev, curr+1)
+"""
+
+
+def lis(arr, prev, curr):
+    if curr == len(arr):
         return 0
     else:
         c1 = 0
-        if str1[i] == str2[j]:
-            c1 = 1 + lcss(str1, str2, i+1, j+1)
-        c2 = lcss(str1, str2, i, j+1)
-        c3 = lcss(str1, str2, i+1, j)
-        return max(c1, c2, c3)
+        if arr[prev] < arr[curr] or prev == -1:
+            c1 = 1 + lis(arr, curr, curr+1)
+        c2 = lis(arr, prev, curr+1)
+        return max(c1, c2)
 
-print(lcss("abdec", "abc", 0, 0)) # expecting 3 abc
-
-def lcss_dp(str1, str2):
-    dp = [[0 for _ in range(len(str2)+1)] for _ in range(len(str1)+1)]
-    max_len = 0
-    for i in range(1, len(str1)+1):
-        for j in range(1, len(str2)+1):
-            if str1[i-1] == str2[j-1]:
-                dp[i][j] = 1 + dp[i-1][j-1]
-            else:
-                dp[i][j] = max(dp[i][j-1], dp[i-1][j])
-            max_len = max(max_len, dp[i][j])
+def lis_dp(arr):
+    dp = [1 for _ in range(len(arr)+1)]
+    max_len = 0 
+    for curr in range(1,len(arr)):
+        for prev in range(curr):
+            if arr[curr] > arr[prev] and dp[prev] >= dp[curr]:
+                dp[curr] = 1 + dp[prev]
+            max_len = max(max_len, dp[curr])
     return max_len
 
-print(lcss_dp("abdec", "abc")) # expecting 3 abc
+print("lis", lis([3,4,1,5,2], -1, 0))
+print("lis_dp", lis_dp([3,4,1,5,2]))
+
+"""
+continue
+colleague 
+
+with most_files as (
+    select actor_id, count(*)
+from actor_film AF
+group by AF.actor_id
+order by 2 desc
+limit 1
 
 
-def root(n):
-    if n < 2:
-        return n
-    else:
-        left = 2 * root(n // 4)
-        right = left + 1
-        return left if right * right > n else right
-    
-print(root(8))
-import collections
-collections.namedtuple()
+)
+select last_name, first_name 
+from actor A
+join  most_films MF
+A.actor_id = MF.actor_id
+"""
