@@ -1,69 +1,9 @@
 """
-Lexical Printing of Numbers
-from 1 to n 
-1, 10, 11, 12 ...
+vs code short cuts 
+    ctrl + P open file
 
-brute force method  is to generate numbers from 1 to 100 
-map(lambda x : int(x) , (sorted([str(i) for i in range(1, n)] )
 
-that is dominated by sort time, 
-to reduce the complexity we will have to reduce time taken by sorting,
-will have to do that without sorting
-
-best we can do is linear time then
-, 
-
-if we imagine the problem to be like a graph 
-we can construct  a tee
-root -> 1, 2, 3 ,4,5,6
-and for each  we add children we add 0 to 10 numbers
-and the n
+intuitive
+colleague
+rhetorical
 """
-
-def lexicalOrder(n):
-    res = []
-
-    def dfs(curr):
-        if curr > n:
-            return
-        
-        res.append(curr)
-        for i in range(0, 10):
-            if curr * 10 + i > n:
-                return
-            dfs(curr *10 +i)
-    
-    for j in range(1, 10):
-        if j < n:
-            dfs(j)
-    return res
-
-print(lexicalOrder(101))
-
-def transform(str1, str2):
-    """
-    Transform one to the other, 
-    We find the length of common subsequence, 
-    we have to delete chars that are not in str1 - lcs
-    then we have to add the chars that are not there in the str1 from str2
-    str2 - lis
-
-    Args:
-        str1 ([type]): [description]
-        str2 ([type]): [description]
-    """
-    lcs_len = lcs(str1, str2)
-    # has to delete all that, and then add all
-    return ((str1 - lcs_len), (str2 - lcs_len))
-
-def lcs(str1, str2):
-    dp = [[0 for _ in range(len(str2)+1)] for _ in range(len(str1)+1)]
-    max_len = 0
-    for i in range(1, len(str1)+1):
-        for j in range(1, len(str2)+1):
-            if str1[i-1] == str2[j-1]:
-                dp[i][j] = dp[i-1][j-1] + 1
-            else:
-                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
-            max_len = max(max_len, dp[i][j])
-    return max_len
