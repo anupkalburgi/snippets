@@ -1,99 +1,69 @@
-
 """
-convinced
-intrepid
-appreciate
-appropriate
+Lexical Printing of Numbers
+from 1 to n 
+1, 10, 11, 12 ...
+
+brute force method  is to generate numbers from 1 to 100 
+map(lambda x : int(x) , (sorted([str(i) for i in range(1, n)] )
+
+that is dominated by sort time, 
+to reduce the complexity we will have to reduce time taken by sorting,
+will have to do that without sorting
+
+best we can do is linear time then
+, 
+
+if we imagine the problem to be like a graph 
+we can construct  a tee
+root -> 1, 2, 3 ,4,5,6
+and for each  we add children we add 0 to 10 numbers
+and the n
 """
 
-def sqrt(x):
-    if x < 2:
-        return x
-    else:
-        left = 2 * sqrt(x // 4)
-        right = left + 1
-        return left if right * right > x else right
+def lexicalOrder(n):
+    res = []
 
-"""
-the other way of doing this would be to use binary search
-we know that the sqrt of n is between 1 and n, so if we take mid, and (mid+1)*(mid+1) > n then search to mid else search from from mid+1 to n 
-"""
-print(sqrt(9))
-
-def xor(n):
-    res = 0
-
-    for i in range(1, n):
-        res = res ^ i
-
+    def dfs(curr):
+        if curr > n:
+            return
+        
+        res.append(curr)
+        for i in range(0, 10):
+            if curr * 10 + i > n:
+                return
+            dfs(curr *10 +i)
+    
+    for j in range(1, 10):
+        if j < n:
+            dfs(j)
     return res
 
+print(lexicalOrder(101))
 
-max_diameter = 0
-def diameter_binary(root):
-    if root is None:
-        return 0
-    else:
-        l = 1 + diameter_binary(root.left)
-        r = 1 + diameter_binary(root.right)
-        max_diameter = max(l, r , max_diameter)
-        return max(l, r)
+def transform(str1, str2):
+    """
+    Transform one to the other, 
+    We find the length of common subsequence, 
+    we have to delete chars that are not in str1 - lcs
+    then we have to add the chars that are not there in the str1 from str2
+    str2 - lis
 
-print(xor(100))
-print("#"*80)
+    Args:
+        str1 ([type]): [description]
+        str2 ([type]): [description]
+    """
+    lcs_len = lcs(str1, str2)
+    # has to delete all that, and then add all
+    return ((str1 - lcs_len), (str2 - lcs_len))
 
-# TODO: streetsidesoftware Spell Checker
-"""
-longest increasing sequence of numbers given a list of numbers
-1. Brute
-    - Generate all possible sub sequences
-    - filter the increasing ones
-    - get the one with maximum size
-    n^2 with hight constants
-2. recursive
-    c1 = if curr > prev => 1 + lis(curr, curr+1)
-    c2 = lis(prev, curr+1)
-"""
-
-
-def lis(arr, prev, curr):
-    if curr == len(arr):
-        return 0
-    else:
-        c1 = 0
-        if arr[prev] < arr[curr] or prev == -1:
-            c1 = 1 + lis(arr, curr, curr+1)
-        c2 = lis(arr, prev, curr+1)
-        return max(c1, c2)
-
-def lis_dp(arr):
-    dp = [1 for _ in range(len(arr)+1)]
-    max_len = 0 
-    for curr in range(1,len(arr)):
-        for prev in range(curr):
-            if arr[curr] > arr[prev] and dp[prev] >= dp[curr]:
-                dp[curr] = 1 + dp[prev]
-            max_len = max(max_len, dp[curr])
+def lcs(str1, str2):
+    dp = [[0 for _ in range(len(str2)+1)] for _ in range(len(str1)+1)]
+    max_len = 0
+    for i in range(1, len(str1)+1):
+        for j in range(1, len(str2)+1):
+            if str1[i-1] == str2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            else:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+            max_len = max(max_len, dp[i][j])
     return max_len
-
-print("lis", lis([3,4,1,5,2], -1, 0))
-print("lis_dp", lis_dp([3,4,1,5,2]))
-
-"""
-continue
-colleague 
-
-with most_files as (
-    select actor_id, count(*)
-from actor_film AF
-group by AF.actor_id
-order by 2 desc
-limit 1
-
-
-)
-select last_name, first_name 
-from actor A
-join  most_films MF
-A.actor_id = MF.actor_id
-"""
