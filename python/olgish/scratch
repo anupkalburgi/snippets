@@ -1,9 +1,112 @@
 """
-vs code short cuts 
-    ctrl + P open file
+Trie basics implementations, 
+have to still do problems for this
+
+we want to do it when we trying to search an string from a bag of strings that are already processed
+It is a data structure, that means we define how data is maintained and used 
+we use algorithm to make the search faster
+"""
+# why can't this be just a function, why does it have to be a class: we have a state that is built up by insert
+# and then there is a search part that that uses the built up structure.
 
 
-intuitive
-colleague
-rhetorical
+class Trie:
+    def __init__(self):
+        self.trie = {}
+
+    def insert(self, word):
+        trie = self.trie
+        for w in word:
+            if w not in trie:
+                trie[w] = w
+            trie = trie[w]
+    # there are some differences from the algorithm that is described in the text books to what is written here
+    """[summary]
+    text book says, we start with root that has nothing in it, and the have 26 or 128 fixed array 
+    each for a alphabet, and so for the rest of it, but that would mean a lot of nulls and wasted space 
+    and more code to write, instead this gives a better way, and the complexity is the same
+    but, there are few more improvements to this, like tirnary trees also called the TNT 
+    large scale , we might want to compute the prefix before hand and use priority queue to get the ranking right
+
+    """
+
+    def search(self, word):
+        trie = self.trie
+        for w in word:
+            if w not in trie:
+                return False
+            trie = trie[w]
+        return trie
+
+    # the daily programming book also has a terminal or end flag for this and i am not sure why that is the case
+
+
+"""
+dealing with matrix diagonals, 
+we want to gather all the elements along the diagonals and sort them out
+and to do that we need a good way of collecting them
+1st way is to look at the start point of all the diagonals, they all start at the edges on left and top
+so we for every starting point we can add 1 to col and row till they reach rowEnd or colEnd
+then construct a class data, and then sort by values
+sorted_diag = [[]]
+matrix = [m][n]
+for diag in diagonals:
+    for (r, c) in diag:
+        matrix[r][c]= diag.value
+
+
+this is good, but a lot of code instead what we  can do is 
+use the r,c to construct a unique key or each diagonal
+
+r = len(matrix)
+c = len(matrix[0])
+diagonals = default.dict(list)
+for i in range(r):
+    for j in range(c):
+        diagonals[i-j].append(matrix[i][j])
+
+for k,vl in diagonals.items():
+    vl.sorted() # mutate
+
+for r in range(r):
+    for c in range(c):
+        matrix[r][c] = diagonals[r-c].pop() because they are already sorted
+        """
+
+
+"""
+is it sortable, or does it from a valid binary search tree \
+for both of that to work it has to be stack sortable
+and foe list of numbers to be stack sortable it has to avoid the pattern 231
+
+what is the other approach to do this?
+
+"""
+
+
+def stack_sortable(numbers):
+    stack = []
+    root = numbers[0]
+    for i in range(1, len(numbers) + 1):
+        if numbers[i] < root:
+            return False
+        while stack and stack[0] < numbers[i]:
+            root = stack.pop()
+            # generally we want to collect the elements, if we intend to collect the sorting
+        stack.append(numbers[i])
+
+
+"""
+can we keep the cow apart a distance x -> True/False
+this takes a linear scan on a sorted input
+can we keep at 1
+at 2
+at 3 
+at 4
+
+and to reduce the search space we can use binary search
+
+coercive
+
+
 """
