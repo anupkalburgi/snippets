@@ -51,11 +51,8 @@ def time_taken(head_id, managers, inform_time):
             # we are maintaining a visited array as will not revisit the node again
             time_needed = max(time_taken_till, inform_time[mng]+time_taken_till)
             queue.append((sub, time_needed))
-            max_time = (time_needed, max_time)
+            max_time = max(time_needed, max_time)
     
     return max_time
-# what is log 16log16 that is also 2 ^ 42 
-# protein
-# collaboration 
-# recognized
-# consequences
+
+print(time_taken(6, [1,2,3,4,5,6,-1], [0,6,5,4,3,2,1] ))
