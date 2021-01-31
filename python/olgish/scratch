@@ -1,62 +1,8 @@
 """
-matrix symmetry
-we have to access the elements of all the diagonals 
-we need to find a group all the elements along diagonal
-
-there are two ways to go about it, 
-1. we observe that all the diagonal are along the 0th row or 0th column
-    0,1
-    0,2
-    0,3
-
-    and 
-
-    0,0
-    1,0
-    2,0
-    3,0
-
-    so now we can have them as keys for the 
-
-    for i,j in (0,1) to (0, endCol)
-        i = i+1
-        j = j+1
-        we will have 
-        0,1
-        1,2
-        2,3
-
-
-2. the other way to go about it would be
-
-def bfs(one, visited):
-    q = [one] # (row, col)
-    visited.append(one)
-    size = 0
-    while q:
-        (nr, nc) = q.pop(0)
-        for (nnr, nc) in neighbors(nr, nc):
-            if (nnr,nnc) not in visited and gird[nnr][nnc] == 1: # we want do proceed only if that is land
-                visited.add((nnr, nnc))
-                q.append((nnr, nnc))
-                size = size +1
-    return size, visited
-
-connected island
-ones = [()]
-visited = set()
-max_size = 0
-for one in ones:
-    if one not in visited:
-        size, visited = bfs(one, visited)
-        max_size = max(size, max_size)
-
-trepidation
-
-
-administration
+TODO
+Closed Left Open right
+publicly
+egalitarian
+depreciate
 protein
-recognized 
-minutes
-
 """
